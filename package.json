@@ -1,11 +1,11 @@
 {
   "name": "fhall18.github.io",
   "version": "4.0.0",
-  "homepage": "https://fhall18.github.io/",
+  "homepage": "https://github.com/fhall18/fhall18.github.io.git",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/fhall18/fhall18.github.io.git"
+    "url": "https://fhall18.github.io/"
   },
   "engines": {
     "node": ">=14.x"
