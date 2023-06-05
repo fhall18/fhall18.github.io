@@ -16,20 +16,19 @@ const work = [
     name: 'Burlington Electric',
     position: 'Resource Planner',
     url: 'https://burlingtonelectric.com',
-    startDate: '2017-01-01',
-    summary: `Smile builds machine learning APIs to compare user submitted photos to ID documents. Our APIs are
-    used by hundreds of thousands of people every day to access financial services. As VP of Engineering,
-    I provide technical leadership on high-impact projects, influence and coach a distributed team of engineers,
-    and facilitate alignment and clarity across teams on goals, outcomes, and timelines. I was promoted
-    from Director of Engineering to VP of Engineering in April 2022, and then to VP of Engineering and Head
-    of AI in November 2022. I lead a 20+ person engineering org. I directly manage ~8 engineers and spend
-    >50% of my time writing code.`,
+    startDate: '2016-09-01',
+    summary: `Burlington Electric is ambitiously working to transform the City of Burlington to become the 
+    first Net Zero Energy city in the world. This task requires careful planning with innovative programs, 
+    designed to generate community engagement while supporting equitable progress towards a cleaner energy system.
+    My work consists of daily forecasting and bidding for load and intermittent renewables, lead market participant 
+    in ISO-NE and other energy markets, development of programs and rates to guide deployment of distributed 
+    energy resources, and additionally, performing statistical modeling and data analysis for business insight 
+    that blend various data sources, including IoT devices, advanced metering infrastructure (AMI), SCADA, weather 
+    and ISO-NE/wholesale market data.`,
     highlights: [
-      'Redesigned engineering processes for bug tracking, meetings, and standups. Improved culture for code reviews, blameless post-mortems, and retrospectives.',
-      'Re-architected engineering hiring and onboarding processes. Recruited several strong engineers.',
-      'Reorged engineering teams to focus on product delivery. Created a new team to focus on ML infrastructure.',
-      'Lead re-design of internal APIs for inference. Built new computer vision pipelines for industry leading certifications (NIST/iBeta liveness).',
-      'Pitched, designed, developed, deployed, and maintain a fraud detection product based on 1-N facial recognition using embeddings and vector search.',
+      'Wholesale Markets.',
+      'Rate and Program Design.',
+      'Python based Modeling.',
     ],
   },
   {
@@ -37,23 +36,41 @@ const work = [
     position: 'Product Innovation',
     url: 'http://greenmountainpower.com',
     startDate: '2015-09-01',
-    endDate:'2017-08-31',
-    summary: `Skeptical Investments is a micro-vc fund focused on Angel, Seed, and Series-A
-    YC companies.`,
+    endDate: '2016-09-01',
+    summary: `Green Mountain Power (GMP) has a unique perspective on the role that a utility/energy services company 
+    should play in the decades to come. With the rapid advancements of energy technologies, disruptive to the conventional 
+    utility model, GMP welcomes this transition to a distributed energy grid by seeing value in these resources and 
+    understanding the need for a zero carbon energy system.
+    My work consisted of program design and implementation, project development, statistical analysis and visualization, 
+    market research, and vendor negotiations. The topics of these projects included work with electric vehicles and 
+    charging, battery storage, thermal storage, industrial storage, photovoltaics, and distributed energy management 
+    system controls for grid side benefits. `,
     highlights: [
-      'Created the InstaSafe. Fast, automated investment docs for YC companies.',
-      'Advise several startups in the fund.',
+      'Identified opportunities with naiscent clean technologies.',
+      'Operated the first distributed utility storage program in the country.',
     ],
   },
   {
-    name: 'UB Nanosatellite Program',
-    position: 'Co-founder, Program Manager',
-    url: 'https://ubnl.space/',
-    startDate: '2010-10-01',
-    endDate: '2012-06-01',
+    name: 'DeltaClimeVT',
+    position: 'Mentor',
+    url: 'https://deltaclimevt.com/',
+    startDate: '2017-10-01',
     highlights: [
-      'Coauthored grant to build a multi-spectral imaging satellite as part of the AFRL University Nanosatellite Program.',
-      'Lead a team of 60 students through satellite development life cycle. Served as a technical expert, acquired intimate working knowledge of satellite subsystems.  Solicited funding through NASA, AFOSR, and several corporate sponsors.',
+      'Provided mentorship to early stage startups focused on renewable energy, clean technology, and distributed energy resources.',
+      'Managed pilot programs with selected companies on behalf of Burlington Electric',
+    ],
+  },
+  {
+    name: 'Joint Lab',
+    position: 'Researcher',
+    url: 'https://joint-lab.github.io/',
+    startDate: '2022-07-01',
+    endDate: '2023-08-01',
+    summary: `Collaborative explorations across sciences with models and data hosted at the Vermont Complex Systems
+    Center. The research focuses on the coevolution of structure and dynamics in complex systems. We make sense of 
+    complex data by bridging the gap between statistics, computer science and complex systems.`,
+    highlights: [
+      'Researched transportation dynamics.',
     ],
   },
 ];
