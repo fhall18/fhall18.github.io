@@ -1,12 +1,12 @@
 // TODO Add a couple lines about each project
 const data = [
   {
-    title: 'Nearest Dollar',
-    subtitle: '2015 BVP Hackathon',
+    title: 'Heat Pump Master Equations',
+    subtitle: 'Modeling Complex Systems',
     image: '/images/projects/nearestdollar.jpg',
-    date: '2015-11-20',
+    date: '2023-06-01',
     desc:
-      'Built for a social impact hackathon. '
+      'Developed a master equations focused on heat pump state transfers. '
       + 'NearestDollar connected to your bank accounts, credit cards, '
       + 'or debit cards and rounded up your purchases to donate the balance to '
       + 'the charity of your choice.',
