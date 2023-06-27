@@ -25,16 +25,16 @@ const data = [
     value: <Age />,
   },
   {
-    key: 'countries',
-    label: 'Countries visited',
-    value: 53,
-    link:
-      'https://www.google.com/maps/d/embed?mid=1iBBTscqateQ93pWFVfHCUZXoDu8&z=2',
-  },
-  {
     key: 'location',
     label: 'Current city',
     value: 'Burlington, VT',
+  },
+  {
+    key: 'sustainable',
+    label: 'Last sustainable purchase',
+    value: 'Surly Peamble',
+    link:
+      'https://surlybikes.com/bikes/preamble',
   },
 ];
 

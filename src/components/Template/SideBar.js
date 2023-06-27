@@ -19,7 +19,7 @@ const SideBar = () => (
 
     <section className="blurb">
       <h2>About</h2>
-      <p>Hi, I&apos;m Frederick. I am a <a href="https://vermontcomplexsystems.org/">Vermont Complex Systems</a> graduate,
+      <p>Hi, I&apos;m Frederick. I am a <a href="https://vermontcomplexsystems.org/">Vermont Complex Systems</a> graduate
         and Resource Planner at <a href="https://burlingtonelectric.com">Burlington Electric</a>.
         I focus on decarbonizing the energy system through electrification and renewable energy.
         Previously, I worked for <a href="https://greenmountainpower.com/">Green Mountain Power</a> focusing on product innovation.

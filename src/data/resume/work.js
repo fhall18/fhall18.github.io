@@ -56,8 +56,9 @@ const work = [
     url: 'https://deltaclimevt.com/',
     startDate: '2017-10-01',
     highlights: [
-      'Provided mentorship to early stage startups focused on renewable energy, clean technology, and distributed energy resources.',
-      'Managed pilot programs with selected companies on behalf of Burlington Electric',
+      'Provided mentorship to early stage startups focused on renewable energy and distributed energy resources.',
+      'Advanced pilot programs with selected companies',
+      'Companies I\'ve worked with: Packetized Energy, EVmatch, ARC Industries',
     ],
   },
   {
@@ -71,6 +72,7 @@ const work = [
     complex data by bridging the gap between statistics, computer science and complex systems.`,
     highlights: [
       'Researched transportation dynamics.',
+      'Performed agriculture and land use modeling for the State of Vermont Carbon Budget under the Global Warming Solution Act.',
     ],
   },
 ];
