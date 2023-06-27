@@ -13,8 +13,6 @@ I am a Resource Planner at Burlington Electric, where I work on decarbonizing el
 - I was interested in electric vehicles after seeing "who killed the electric car" in 2006
 - I love sailing! I grew up racing and have continued as an instructor, race coach and now part-time instructor. I have taught beginners to advanced racers, spanning the ages of 6 to 86.
 - My favoritte single-handed, one-design is the Laser, next may be a Melgus 15...
-- 
-# I
 
 <!-- 
 # I dream of
