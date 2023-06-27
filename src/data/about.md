@@ -5,7 +5,7 @@ I am a Resource Planner at Burlington Electric, where I work on decarbonizing el
 
 # What I Read
 
-![books](https://upload.wikimedia.org/wikipedia/commons/b/ba/Book_chart_2.jpg =250x)
+![books](https://upload.wikimedia.org/wikipedia/commons/b/ba/Book_chart_2.jpg)
 # "The more that you read, the more things you will know. The more that you learn, the more places you'll go." ~ Dr. Seuss
 
 # Little Facts
