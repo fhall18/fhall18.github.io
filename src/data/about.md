@@ -9,7 +9,7 @@ I am a Resource Planner at Burlington Electric, where I work on decarbonizing el
 
 
 <body style="overflow:hidden; margin:0; text-align:center;">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Book_chart_2.jpg" style="height:60vh; max-width:110%; object-fit: contain;">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Book_chart_2.jpg" style="height:60vh; max-width:100%; object-fit: contain;">
 </body>
 
 
