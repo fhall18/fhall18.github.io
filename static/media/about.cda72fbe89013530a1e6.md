@@ -8,6 +8,10 @@ I am a Resource Planner at Burlington Electric, where I work on decarbonizing el
 <!-- <img class="make-it-fit" src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Book_chart_2.jpg" alt="img-verification"> -->
 
 
+<!-- <Link to="/" className="logo">
+    <img src={`${PUBLIC_URL}/images/me.jpg`} alt="" />
+</Link> -->
+
 <body style="overflow:hidden; margin:0; text-align:center;">
     <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Book_chart_2.jpg" style="height:60vh; max-width:100%; object-fit: contain;">
 </body>
