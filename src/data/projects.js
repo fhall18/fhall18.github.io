@@ -19,15 +19,16 @@ const data = [
     image: '/images/projects/cycling.jpg',
     date: '2022-12-01',
     desc:
-      'Won ~ $7000 in prizes for an advanced, low cost monitoring solution '
-      + 'for crops. Harvest was designed to catch irrigation leaks, overwatering, '
-      + 'and nutrient deficiencies at an affordable price for the developing world.',
+      'Trained a convolutional neural network to detect emotional bias in sports commentating'
+      + 'to understand gender inequalities in professional sports. Training was '
+      + 'performed on +10,000 emotional clips and used to analyze audio from over'
+      + 'a hundred cycling events.',
   },
   {
     title: 'Cat Detector',
     subtitle: 'A convolutional neural network to classify cats! (and dogs)',
     image: '/images/projects/catdetector.jpg',
-    date: '2023-07-15',
+    date: '2021-07-15',
     desc:
       'Trained a convolutional neural network to classify between ~ 80 cats breeds. '
       + 'Over 60,000 cats were classified before server bills made the project too expensive '
