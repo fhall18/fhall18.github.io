@@ -3,7 +3,7 @@ const data = [
   {
     title: 'Master Equations',
     subtitle: 'Modeling Complex Systems',
-    link: 'https://github.com/fhall18/cchpMasterEquation/blob/main/thermalStates.ipynb',
+    link: 'https://github.com/fhall18/cchpMasterEquation/tree/main',
     image: '/images/projects/hp_me.jpg',
     date: '2023-06-01',
     desc:
@@ -13,16 +13,15 @@ const data = [
       + 'the charity of your choice.',
   },
   {
-    title: 'Commentator Bias',
+    title: 'Gender Biases in Sports Commentary',
     subtitle: 'Top grade in masters level class',
-    link: 'https://devpost.com/software/harvest',
+    link: 'https://www.overleaf.com/read/gzqdvpbqgsrq',
     image: '/images/projects/cycling.jpg',
     date: '2022-12-01',
     desc:
-      'Trained a convolutional neural network to detect emotional bias in sports commentating'
-      + 'to understand gender inequalities in professional sports. Training was '
-      + 'performed on +10,000 emotional clips and used to analyze audio from over'
-      + 'a hundred cycling events.',
+      'Designed and trained a deep convolutional neural network to explore gender bias '
+      + 'in professional sports commentating. Training used +10,000 emotional audio'
+      + 'files and classified commentating from more than 100 cycling events.',
   },
   {
     title: 'Cat Detector',
