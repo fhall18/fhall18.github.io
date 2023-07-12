@@ -24,6 +24,17 @@ const data = [
       + 'files and classified commentating from more than 100 cycling events.',
   },
   {
+    title: 'Vermont Carbon Budget',
+    subtitle: 'Awarded competative RFP funding state-wide carbon study',
+    link: 'https://outside.vermont.gov/agency/anr/climatecouncil/Shared%20Documents/(10)%20Carbon%20Budget.pdf',
+    image: '/images/projects/carbonBudget.png',
+    date: '2022-12-01',
+    desc:
+      'Data scientist on a team awarded a competative RFP by the State of Vermont to build '
+      + 'a carbon budget using data pipelines to evaluate carbon stocks and fluxes for '
+      + 'agriculture, forestry, and other land-use historically and into the future.',
+  },
+  {
     title: 'Cat Detector',
     subtitle: 'A convolutional neural network to classify cats! (and dogs)',
     image: '/images/projects/catdetector.jpg',
