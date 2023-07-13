@@ -34,16 +34,6 @@ const data = [
       + 'a carbon budget using data pipelines to evaluate carbon stocks and fluxes for '
       + 'agriculture, forestry, and other land-use historically and into the future.',
   },
-  {
-    title: 'Cat Detector',
-    subtitle: 'A convolutional neural network to classify cats! (and dogs)',
-    image: '/images/projects/catdetector.jpg',
-    date: '2021-07-15',
-    desc:
-      'Trained a convolutional neural network to classify between ~ 80 cats breeds. '
-      + 'Over 60,000 cats were classified before server bills made the project too expensive '
-      + 'to continue hosting.',
-  },
 ];
 
 export default data;
