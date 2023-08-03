@@ -4,7 +4,7 @@ const data = [
     title: 'The Power Supply',
     subtitle: 'A blog I started',
     link: 'https://powersupply.substack.com',
-    image: '/images/projects/powersupply2.jpg',
+    image: '/images/projects/powersupply.jpg',
     date: '2023-07-01',
     desc:
       'Realizing the fun in creative writing, and the need for more '
