@@ -1,6 +1,18 @@
 // TODO Add a couple lines about each project
 const data = [
   {
+    title: 'The Power Supply',
+    subtitle: 'A blog I started',
+    link: 'https://powersupply.substack.com',
+    image: '/images/projects/powersupply2.jpg',
+    date: '2023-07-01',
+    desc:
+      'Realizing the fun in creative writing, and the need for more '
+      + 'folks in my generation to align their lifestyles with the energy '
+      + 'transition, I decided to start blogging. All views, code and alaysis '
+      + 'are my own.',
+  },
+  {
     title: 'Master Equations',
     subtitle: 'Modeling Complex Systems',
     link: 'https://github.com/fhall18/cchpMasterEquation/tree/main',
