@@ -7,10 +7,10 @@ const data = [
     image: '/images/projects/powersupply.jpg',
     date: '2023-07-01',
     desc:
-      'Realizing the fun in creative writing, and the need for more '
-      + 'folks in my generation to align their lifestyles with the energy '
-      + 'transition, I decided to start blogging. All views, code and alaysis '
-      + 'are my own.',
+      'Realizing the fun in creative writing and the need for more '
+      + 'people to align their lifestyle with the energy transition, '
+      + 'I decided to start blogging. All views, code and alaysis are my '
+      + 'own.',
   },
   {
     title: 'Master Equations',
