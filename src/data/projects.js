@@ -8,8 +8,8 @@ const data = [
     date: '2023-07-01',
     desc:
       'Realizing the fun in creative writing and the need for more '
-      + 'people to align their lifestyle with the energy transition, '
-      + 'I decided to start blogging. All views, code and alaysis are my '
+      + 'people to talk about how to decarbonize their lifestyle, '
+      + 'I decided to start blogging. All views, code and analysis are my '
       + 'own.',
   },
   {
