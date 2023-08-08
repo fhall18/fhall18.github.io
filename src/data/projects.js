@@ -19,10 +19,10 @@ const data = [
     image: '/images/projects/hp_me.jpg',
     date: '2023-06-01',
     desc:
-      'Developed a master equations focused on heat pump state transfers. '
-      + 'NearestDollar connected to your bank accounts, credit cards, '
-      + 'or debit cards and rounded up your purchases to donate the balance to '
-      + 'the charity of your choice.',
+      'Developed master equations focused on heat pump state transfers. '
+      + 'This enables us to understand a stable state equilibrium when '
+      + 'solving for outdoor air temperature (Ta) and building envolope '
+      + 'efficiency.',
   },
   {
     title: 'Gender Biases in Sports Commentary',
