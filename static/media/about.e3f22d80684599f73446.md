@@ -1,7 +1,9 @@
 
 # Intro
 
-I am a Resource Planner at Burlington Electric, where I work on decarbonizing electricity, transportation and buildings. I recently graduated with an M.S. in Complex Systems + Data Science from [University of Vermont Complex Systems Center](https://vermontcomplexsystems.org/). Before Burlington Electric, I worked on Product Innovation with [Green Mountain Power](https://greenmountainpower.com). In my spare time, I am a volunteer ski patroller for [Mad River Glen](https://www.madriverglen.com/). I'm particularly interested in projects with high social and climate impact. If you think I can be helpful to you or your cause and would like to meet, please feel free to get in touch.
+I’ve spent +10 years focusing on mitigating climate change by way of efficient and strategic electrification. I hold an M.S. in Complex Systems and Data Science from the [University of Vermont Complex Systems Center](https://vermontcomplexsystems.org/) and have worked in the electric utility world for [Burlington Electric](https://www.burlingtonelectric.com/) and [Green Mountain Power](https://greenmountainpower.com). I write about ways to adopt a clean energy lifestyle and find myself talking about the importance of expanding public charging while on vacation. When it snows, you may find me at [Mad River Glen](https://www.madriverglen.com/) where I volunteer as a Ski Patroller. 
+
+I'm particularly interested in projects with high social and climate impact. If you think I can be helpful to you or your cause and would like to meet, please feel free to get in touch.
 
 # What I Read
 
@@ -16,8 +18,6 @@ I am a Resource Planner at Burlington Electric, where I work on decarbonizing el
     <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Book_chart_2.jpg" style="height:60vh; max-width:100%; object-fit: contain;">
 </body>
 
-
-# "The more that you read, the more things you will know. The more that you learn, the more places you'll go." ~ Dr. Seuss
 
 # Little Facts
 - I'm an EV evangelist and promote charging access on vacations
