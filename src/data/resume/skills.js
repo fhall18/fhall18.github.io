@@ -156,7 +156,7 @@ const skills = [
   },
   {
     title: 'Julia',
-    competency: 2,
+    competency: 1,
     category: ['Languages'],
   },
   {
@@ -187,7 +187,12 @@ const skills = [
   {
     title: 'Matplotlib',
     competency: 5,
-    category: ['Data Engineering', 'ML Engineering', 'Python'],
+    category: ['Data Science', 'ML Engineering', 'Python'],
+  },
+  {
+    title: 'Seaborn',
+    competency: 5,
+    category: ['Data Science', 'ML Engineering', 'Python'],
   },
   {
     title: 'Snowflake',
