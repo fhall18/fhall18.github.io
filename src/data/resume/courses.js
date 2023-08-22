@@ -1,7 +1,7 @@
 const courses = [
   {
     title: 'Deep Learning',
-    number: 'EE 354',
+    number: 'CS 354',
     link: 'https://swshah.w3.uvm.edu/vail/',
     university: 'University of Vermont',
   },
@@ -33,6 +33,24 @@ const courses = [
     title: 'Bayesian Statistics',
     number: 'CS 330',
     link: 'https://www.uvm.edu/cems/mathstat/profiles/jean-gabriel-young',
+    university: 'University of Vermont',
+  },
+  {
+    title: 'Statistical Learning',
+    number: 'CS 288',
+    link: 'https://catalogue.uvm.edu/undergraduate/courses/courselist/stat/',
+    university: 'University of Vermont',
+  },
+  {
+    title: 'Calculus II',
+    number: 'MATH 224',
+    link: 'https://www.uvm.edu/cems/mathstat/profiles/jean-gabriel-young',
+    university: 'University of Vermont',
+  },
+  {
+    title: 'Data Structures and Algorithms',
+    number: 'CS 200',
+    link: 'https://learn.uvm.edu/course/202301/10494/spring-2023/computer-science/qr-data-struc-algorithms/',
     university: 'University of Vermont',
   },
 ];
