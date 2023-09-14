@@ -216,7 +216,7 @@ const skills = [
   // },
   {
     title: 'Mypy',
-    competency: 3,
+    competency: 2,
     category: ['Python'],
   },
   {
