@@ -71,7 +71,7 @@ const skills = [
   // },
   {
     title: 'Flask',
-    competency: 2,
+    competency: 3,
     category: ['Web Development', 'Python'],
   },
   {
@@ -129,11 +129,11 @@ const skills = [
   //   competency: 3,
   //   category: ['Web Development', 'Languages', 'Javascript'],
   // },
-  // {
-  //   title: 'HTML + SASS/SCSS/CSS',
-  //   competency: 3,
-  //   category: ['Web Development', 'Languages'],
-  // },
+  {
+    title: 'HTML + SASS/SCSS/CSS',
+    competency: 2,
+    category: ['Web Development', 'Languages'],
+  },
   {
     title: 'Python',
     competency: 5,
