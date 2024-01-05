@@ -5,7 +5,7 @@ const Age = () => {
 
   const tick = () => {
     const divisor = 1000 * 60 * 60 * 24 * 365.2421897; // ms in an average year
-    const birthTime = new Date('1992-10-18T03:24:00');
+    const birthTime = new Date('1996-10-18T03:24:00');
     setAge(((Date.now() - birthTime) / divisor).toFixed(11));
   };
 
@@ -21,7 +21,7 @@ const Age = () => {
 const data = [
   {
     key: 'age',
-    label: 'Current age',
+    label: 'Current years skiing',
     value: <Age />,
   },
   {
@@ -32,7 +32,7 @@ const data = [
   {
     key: 'sustainable',
     label: 'Last sustainable purchase',
-    value: 'Surly Peamble',
+    value: 'Surly Preamble',
     link:
       'https://surlybikes.com/bikes/preamble',
   },
