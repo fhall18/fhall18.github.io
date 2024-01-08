@@ -16,7 +16,7 @@ const data = [
     title: 'Master Equations',
     subtitle: 'Modeling Complex Systems',
     link: 'https://github.com/fhall18/cchpMasterEquation/tree/main',
-    image: '/images/projects/hp_me.jpg',
+    image: '/images/projects/hp_me_2.jpg',
     date: '2023-06-01',
     desc:
       'Developed master equations focused on heat pump state transfers. '
