@@ -59,11 +59,11 @@ const skills = [
     competency: 3,
     category: ['ML Engineering'],
   },
-  // {
-  //   title: 'Express.JS',
-  //   competency: 2,
-  //   category: ['Web Development', 'Javascript'],
-  // },
+  {
+    title: 'Dash',
+    competency: 5,
+    category: ['Web Development', 'Python'],
+  },
   // {
   //   title: 'D3',
   //   competency: 2,
@@ -111,12 +111,12 @@ const skills = [
   },
   {
     title: 'Tensorflow + Keras',
-    competency: 4,
+    competency: 5,
     category: ['ML Engineering', 'Python'],
   },
   {
     title: 'PyTorch',
-    competency: 4,
+    competency: 5,
     category: ['ML Engineering', 'Python'],
   },
   {
@@ -196,7 +196,7 @@ const skills = [
   },
   {
     title: 'Snowflake',
-    competency: 1,
+    competency: 3,
     category: ['Data Science', 'ML Engineering'],
   },
   {
