@@ -60,7 +60,7 @@ const skills = [
     category: ['ML Engineering'],
   },
   {
-    title: 'Dash',
+    title: 'Plotly',
     competency: 5,
     category: ['Web Development', 'Python'],
   },
