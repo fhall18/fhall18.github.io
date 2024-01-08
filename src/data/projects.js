@@ -7,10 +7,11 @@ const data = [
     image: '/images/projects/rate_calc.gif',
     date: '2024-01-01',
     desc:
-      'Realizing the fun in creative writing and the need for more '
-      + 'people to talk about how to decarbonize their lifestyle, '
-      + 'I decided to start blogging. All views, code and analysis are my '
-      + 'own.',
+      'Fast decarbonization  means faster electrification. '
+      + 'This tool helps answer what it will cost to heat and '
+      + 'drive with electric? What about adding solar? '
+      + 'What electric rates are availalable? And what '
+      + 'is the value of flexibility?',
   },
   {
     title: 'The Power Supply',
