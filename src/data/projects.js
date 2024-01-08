@@ -1,6 +1,18 @@
 // TODO Add a couple lines about each project
 const data = [
   {
+    title: 'Rate Calculator',
+    subtitle: 'A way to guide decarbonization planning',
+    link: 'https://thepowersupply.pythonanywhere.com',
+    image: '/images/projects/rate_calc.gif',
+    date: '2024-01-01',
+    desc:
+      'Realizing the fun in creative writing and the need for more '
+      + 'people to talk about how to decarbonize their lifestyle, '
+      + 'I decided to start blogging. All views, code and analysis are my '
+      + 'own.',
+  },
+  {
     title: 'The Power Supply',
     subtitle: 'A blog I started',
     link: 'https://powersupply.substack.com',
