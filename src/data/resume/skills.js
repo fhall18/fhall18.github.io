@@ -222,7 +222,7 @@ const skills = [
   {
     title: 'Tableau',
     competency: 5,
-    category: ['Tools','Data Science'],
+    category: ['Tools', 'Data Science'],
   },
   {
     title: 'Pylint',
