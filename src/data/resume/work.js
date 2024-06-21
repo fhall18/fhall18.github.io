@@ -13,6 +13,18 @@
  */
 const work = [
   {
+    name: 'EnergyHub',
+    position: 'Data Science',
+    url: 'https://www.energyhub.com',
+    startDate: '2024-03-18',
+    summary: ``,
+    highlights: [
+      'Wholesale Markets.',
+      'Rate and Program Design.',
+      'Python based Modeling.',
+    ],
+  },
+  {
     name: 'Burlington Electric',
     position: 'Resource Planner',
     url: 'https://burlingtonelectric.com',
