@@ -19,11 +19,12 @@ const SideBar = () => (
 
     <section className="blurb">
       <h2>About</h2>
-      <p>Hi, I&apos;m Frederick. I am a <a href="https://vermontcomplexsystems.org/">Vermont Complex Systems</a> graduate
-        and Resource Planner at <a href="https://burlingtonelectric.com">Burlington Electric</a>.
+      <p>Hi, I&apos;m Frederick. I am a Data Scientist with <a href="https://energyhub.com/">EnergyHub</a> and
+        a <a href="https://vermontcomplexsystems.org/">Vermont Complex Systems</a> graduate.
         I focus on decarbonizing the energy system through electrification and renewable energy.
-        Previously, I worked for <a href="https://greenmountainpower.com/">Green Mountain Power</a> focusing on product innovation.
-        When the snow falls, I Ski Patrol at <a href="https://www.madriverglen.com/ski-patrol/">Mad River Glen </a>.
+        Previously, I worked at <a href="https://burlingtonelectric.com">Burlington Electric</a> and <a href="https://greenmountainpower.com/">Green Mountain Power</a>, two leading electric utilities
+        known for their innovation and climate impact. When the snow falls, I Ski Patrol
+        at <a href="https://www.madriverglen.com/ski-patrol/">Mad River Glen </a>.
       </p>
       <ul className="actions">
         <li>
