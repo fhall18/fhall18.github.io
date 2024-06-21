@@ -12,18 +12,24 @@
  * @property {string[]} highlights - plain text highlights of the position (bulleted list)
  */
 const work = [
-  // {
-  //   name: 'EnergyHub',
-  //   position: 'Data Science',
-  //   url: 'https://www.energyhub.com',
-  //   startDate: '2024-03-18',
-  //   summary: ``,
-  //   highlights: [
-  //     'Optimization.',
-  //     'Python based modeling.',
-  //     'Data science.',
-  //   ],
-  // },
+  {
+    name: 'EnergyHub',
+    position: 'Data Scientist',
+    url: 'https://energyhub.com',
+    startDate: '2024-03-18',
+    summary: `EnergyHub operates the largest fleet of grid-edge devices in the North America 
+    and empowers electric utilities and their customers to create a clean, 
+    distributed energy future by transforming complexity at the grid edge into 
+    reliable resources for utilities and energy markets. The projects this team works on 
+    includes optimization of electric vehicle charging, battery storage, and thermostats, 
+    advanced simulation and modeling to test new control sequences and software engineering 
+    to achieve scale.`,
+    highlights: [
+      'Electric grid optimization',
+      'Software Engineering',
+      'Data science',
+    ],
+  },
   {
     name: 'Burlington Electric',
     position: 'Resource Planner',
@@ -38,9 +44,9 @@ const work = [
     that blend various data sources, including IoT devices, advanced metering infrastructure (AMI), SCADA, weather 
     and ISO-NE/wholesale market data.`,
     highlights: [
-      'Wholesale Markets.',
-      'Rate and Program Design.',
-      'Python based Modeling.',
+      'Wholesale Markets',
+      'Rate and Program Design',
+      'Python based Modeling',
     ],
   },
   {
