@@ -12,18 +12,18 @@
  * @property {string[]} highlights - plain text highlights of the position (bulleted list)
  */
 const work = [
-  {
-    name: 'EnergyHub',
-    position: 'Data Science',
-    url: 'https://www.energyhub.com',
-    startDate: '2024-03-18',
-    summary: ``,
-    highlights: [
-      'Wholesale Markets.',
-      'Rate and Program Design.',
-      'Python based Modeling.',
-    ],
-  },
+  // {
+  //   name: 'EnergyHub',
+  //   position: 'Data Science',
+  //   url: 'https://www.energyhub.com',
+  //   startDate: '2024-03-18',
+  //   summary: ``,
+  //   highlights: [
+  //     'Optimization.',
+  //     'Python based modeling.',
+  //     'Data science.',
+  //   ],
+  // },
   {
     name: 'Burlington Electric',
     position: 'Resource Planner',
