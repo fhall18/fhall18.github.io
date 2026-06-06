@@ -1,8 +1,20 @@
 // TODO Add a couple lines about each project
 const data = [
   {
+    title: 'How Far Can a Dollar Take You?',
+    subtitle: 'Interactive electrification cost explorer',
+    slug: 'how-far-can-a-dollar-take-you',
+    image: '/images/projects/dollar.jpg',
+    date: '2026-06-01',
+    desc:
+      'How far can a dollar get out when you electrify? But acutally, '
+      + 'how many miles can you travel on a dollar?',
+    interactive: 'MilesPerDollarViz',
+  },
+  {
     title: 'Rate Calculator',
     subtitle: 'A way to guide decarbonization planning',
+    slug: 'rate-calculator',
     link: 'https://thepowersupply.pythonanywhere.com',
     image: '/images/projects/rate_calc.gif',
     date: '2024-01-01',
@@ -16,6 +28,7 @@ const data = [
   {
     title: 'The Power Supply',
     subtitle: 'A blog I started',
+    slug: 'the-power-supply',
     link: 'https://powersupply.substack.com',
     image: '/images/projects/powersupply.jpg',
     date: '2023-07-01',
@@ -28,6 +41,7 @@ const data = [
   {
     title: 'Master Equations',
     subtitle: 'Modeling Complex Systems',
+    slug: 'master-equations',
     link: 'https://github.com/fhall18/cchpMasterEquation/tree/main',
     image: '/images/projects/hp_me_2.jpg',
     date: '2023-06-01',
@@ -40,6 +54,7 @@ const data = [
   {
     title: 'Gender Biases in Sports Commentary',
     subtitle: 'Top grade in masters level class',
+    slug: 'gender-biases-sports',
     link: 'https://www.overleaf.com/read/gzqdvpbqgsrq',
     image: '/images/projects/cycling.jpg',
     date: '2022-12-01',
@@ -51,6 +66,7 @@ const data = [
   {
     title: 'Vermont Carbon Budget',
     subtitle: 'Awarded competative RFP funding state-wide carbon study',
+    slug: 'vermont-carbon-budget',
     link: 'https://outside.vermont.gov/agency/anr/climatecouncil/Shared%20Documents/(10)%20Carbon%20Budget.pdf',
     image: '/images/projects/carbonBudget.png',
     date: '2022-12-01',
