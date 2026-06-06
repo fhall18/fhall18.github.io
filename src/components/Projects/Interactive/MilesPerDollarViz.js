@@ -154,7 +154,7 @@ const MilesPerDollarViz = () => {
       <div className="viz-legend">
         <span className="legend-item" style={{ color: '#FFAA00' }}>&#9632; Gas car</span>
         <span className="legend-item electric" style={{ color: '#364F6B' }}>&#9632; EV (Retail)</span>
-        <span className="legend-item" style={{ color: '#519A66' }}>&#9632; EV (off-peak, 35% discount)</span>
+        <span className="legend-item" style={{ color: '#519A66' }}>&#9632; EV (off-peak, 30% discount)</span>
       </div>
 
       <D3Chart
