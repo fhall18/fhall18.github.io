@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import * as d3 from 'd3';
 import D3Chart from './D3Chart';
+import HexMap from './HexMap';
 
 const MilesPerDollarViz = () => {
   const [stateData, setStateData] = useState([]);
@@ -24,8 +25,7 @@ const MilesPerDollarViz = () => {
     });
   }, []);
 
-  const handleStateChange = (e) => {
-    const name = e.target.value;
+  const handleStateChange = (name) => {
     setSelectedState(name);
     const row = stateData.find((r) => r.state === name);
     if (row) {
@@ -109,19 +109,11 @@ const MilesPerDollarViz = () => {
         how many miles you can travel on a single dollar.
       </p>
 
-      <div className="viz-state-selector">
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-        <label htmlFor="state-select">State</label>
-        <select
-          id="state-select"
-          value={selectedState}
-          onChange={handleStateChange}
-        >
-          {stateData.map((row) => (
-            <option key={row.state} value={row.state}>{row.state}</option>
-          ))}
-        </select>
-      </div>
+      <HexMap
+        selectedState={selectedState}
+        onStateSelect={handleStateChange}
+        stateData={stateData}
+      />
 
       <div className="viz-controls">
         <div className="control-group">

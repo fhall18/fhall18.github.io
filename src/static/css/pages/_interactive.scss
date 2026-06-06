@@ -54,6 +54,33 @@
   }
 }
 
+.hex-map-container {
+  margin-bottom: 1.5em;
+  max-width: 600px;
+
+  svg {
+    display: block;
+    max-height: 320px;
+  }
+
+  .hex-map-caption {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 0.4em;
+    text-align: center;
+  }
+}
+
+.hex-state {
+  transition: opacity 0.15s;
+
+  &:hover polygon {
+    opacity: 1 !important;
+    stroke: #333;
+    stroke-width: 2.5;
+  }
+}
+
 .viz-controls {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
