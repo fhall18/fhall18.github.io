@@ -231,7 +231,8 @@ const MilesPerDollarViz = () => {
         Data is sourced from the U.S. Energy Information Administration, AAA, NOAA and this{' '}
         <a href="https://www.sciencedirect.com/science/article/pii/S2666052024000190" target="_blank" rel="noopener noreferrer">ScienceDirect article</a>
         {' '} to model EV fuel efficiency given weather. I use the base vehicle efficiencies of 4 miles/kWh and a gas car MPG of 24 to reflect
-        the 2026 U.S. passenger car averages.
+        the 2026 U.S. passenger car averages. The idea for this visual was heavily inspired by the excellent work of the {' '}
+        <a href="https://eanvt.org/about/what-we-do/about-ean/" target="_blank" rel="noopener noreferrer">Energy Action Network</a>, showcased in their annual report.
       </p>
     </div>
   );
