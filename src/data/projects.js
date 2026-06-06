@@ -7,10 +7,10 @@ const data = [
     image: '/images/projects/dollar.jpg',
     date: '2026-06-01',
     desc:
-      'The age old idiom of "how far does a dollar go?" is especially relevant when it comes to what car you drive. '
-      + 'This tool allows you to explore how many miles you can travel on a single dollar using different fuel sources. '
-      + 'Electric vehicle (EV) are 4x more efficient than gas cars, and gas prices are extremely volatile. '
-      + 'Click to see how far your dollar can take you!',
+      'A dollar today doesn\'t get you quite as far… '
+      + 'but how far is that exactly? And can it be stretched? This tool turns dollars into miles to see how far you can travel. '
+      + 'Electric vehicle (EV) are 4x more efficient than gas cars, and gas prices are extremely volatile. Explore how many '
+      + 'miles a single dollar can take you!',
     interactive: 'MilesPerDollarViz',
   },
   {

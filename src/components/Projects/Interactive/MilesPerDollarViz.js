@@ -141,11 +141,8 @@ const MilesPerDollarViz = () => {
     <div className="interactive-viz">
       <h3>How far can you get on $1?</h3>
       <p className="viz-description">
-        Select a state to load local energy prices, then adjust to compare
-        how many miles you can travel on a single dollar. Data is provided
-        by the U.S. Energy Information Administration and AAA, and assumes an
-        EV efficiency of 4 miles/kWh and a gas car MPG of 24 (the 2026 U.S.
-        passenger car averages).
+        Select a state to load local energy prices and weather data, then adjust to compare
+        how many miles you can travel on a single dollar.
       </p>
 
       <HexMap
@@ -165,7 +162,7 @@ const MilesPerDollarViz = () => {
         data={chartData}
         height={280}
       />
-
+      <h3>knobs and dials</h3>
       <div className="viz-controls">
         <div className="control-group">
           <label htmlFor="electric-rate">
@@ -229,6 +226,13 @@ const MilesPerDollarViz = () => {
           />
         </div>
       </div>
+      <h3>Sources</h3>
+      <p className="viz-description">
+        Data is sourced from the U.S. Energy Information Administration, AAA, NOAA and this{' '}
+        <a href="https://www.sciencedirect.com/science/article/pii/S2666052024000190" target="_blank" rel="noopener noreferrer">ScienceDirect article</a>
+        {' '} to model EV fuel efficiency given weather. I use the base vehicle efficiencies of 4 miles/kWh and a gas car MPG of 24 to reflect
+        the 2026 U.S. passenger car averages.
+      </p>
     </div>
   );
 };

@@ -115,7 +115,7 @@ const HexMap = ({
     const maxPrice = d3.max(prices) || 5.00;
     const minPrice = d3.min(prices) || 2.50;
     const colorScale = d3.scaleSequential(d3.interpolateYlOrRd)
-      .domain([minPrice, maxPrice]);
+      .domain([2, maxPrice]);
 
     svg.selectAll('.hex-state').each(function applyColor() {
       const group = d3.select(this);
@@ -174,7 +174,7 @@ const HexMap = ({
         preserveAspectRatio="xMidYMid meet"
       />
       <div className="hex-map-caption">
-        Click a state to load its energy prices.
+        Click a state to load energy prices and weather data.
         Color indicates gas price (darker = higher).
       </div>
     </div>
