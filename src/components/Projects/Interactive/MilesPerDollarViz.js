@@ -7,11 +7,12 @@ const MilesPerDollarViz = () => {
   const [stateData, setStateData] = useState([]);
   const [selectedState, setSelectedState] = useState('Vermont');
   const [electricRate, setElectricRate] = useState(0.22);
-  const [gasPricePerGallon, setGasPricePerGallon] = useState(3.80);
-  const [evEfficiency, setEvEfficiency] = useState(3.0);
-  const [gasCarMpg, setGasCarMpg] = useState(28);
+  const [gasPricePerGallon, setGasPricePerGallon] = useState(4.50);
+  const [evEfficiency, setEvEfficiency] = useState(4.0);
+  const [gasCarMpg, setGasCarMpg] = useState(24);
+  const [meanTemp, setMeanTemp] = useState(6.0);
 
-  const offPeakDiscount = 0.4;
+  const offPeakDiscount = 0.3;
   const offPeakRate = electricRate * (1 - offPeakDiscount);
 
   useEffect(() => {
@@ -21,6 +22,7 @@ const MilesPerDollarViz = () => {
       if (initial) {
         setElectricRate(parseFloat(initial.residential_electric_rate) / 100);
         setGasPricePerGallon(parseFloat(initial.regular_gas));
+        setMeanTemp(parseFloat(initial.mean_temp_c) || 6.0);
       }
     });
   }, []);
@@ -31,13 +33,18 @@ const MilesPerDollarViz = () => {
     if (row) {
       setElectricRate(parseFloat(row.residential_electric_rate) / 100);
       setGasPricePerGallon(parseFloat(row.regular_gas));
+      setMeanTemp(parseFloat(row.mean_temp_c) || 6.0);
     }
   };
 
   const computeData = () => {
+    const t = meanTemp;
+    const tempFactor = 0.000011 * t ** 3
+      + 0.00045 * t ** 2 - 0.038 * t + 1.57;
+    const adjEfficiency = evEfficiency / tempFactor;
     const milesPerDollarGas = gasCarMpg / gasPricePerGallon;
-    const milesPerDollarEV = evEfficiency / electricRate;
-    const milesPerDollarEVOffPeak = evEfficiency / offPeakRate;
+    const milesPerDollarEV = adjEfficiency / electricRate;
+    const milesPerDollarEVOffPeak = adjEfficiency / offPeakRate;
 
     return [
       { category: 'Gas car', value: milesPerDollarGas, color: '#FFAA00' },
@@ -45,6 +52,10 @@ const MilesPerDollarViz = () => {
       { category: 'EV (off-peak)', value: milesPerDollarEVOffPeak, color: '#519A66' },
     ];
   };
+
+  const tempFactor = 0.000011 * meanTemp ** 3
+    + 0.00045 * meanTemp ** 2 - 0.038 * meanTemp + 1.57;
+  const adjEfficiency = evEfficiency / tempFactor;
 
   const chartData = computeData();
 
@@ -90,12 +101,37 @@ const MilesPerDollarViz = () => {
       .attr('fill', (d) => d.color)
       .attr('rx', 3);
 
+    g.selectAll('.road-line')
+      .data(data)
+      .join('line')
+      .attr('class', 'road-line')
+      .attr('x1', 4)
+      .attr('x2', (d) => x(d.value) - 4)
+      .attr('y1', (d) => y(d.category) + y.bandwidth() / 2)
+      .attr('y2', (d) => y(d.category) + y.bandwidth() / 2)
+      .attr('stroke', '#fff')
+      .attr('stroke-width', 2)
+      .attr('stroke-dasharray', '8 6')
+      .attr('opacity', 0.8);
+
+    g.selectAll('.car-emoji')
+      .data(data)
+      .join('image')
+      .attr('class', 'car-emoji')
+      .attr('href', (d) => (d.category === 'Gas car'
+        ? `${process.env.PUBLIC_URL}/images/random/gas_car_emoji.png`
+        : `${process.env.PUBLIC_URL}/images/random/ev_emoji.png`))
+      .attr('x', (d) => x(d.value) - (d.category === 'Gas car' ? 62 : 55))
+      .attr('y', (d) => y(d.category) - (d.category === 'Gas car' ? 35 : 33))
+      .attr('width', (d) => (d.category === 'Gas car' ? 60 : 52))
+      .attr('height', (d) => (d.category === 'Gas car' ? 45 : 38));
+
     g.selectAll('.label')
       .data(data)
       .join('text')
       .attr('class', 'label')
       .attr('y', (d) => y(d.category) + y.bandwidth() / 2 + 5)
-      .attr('x', (d) => x(d.value) + 8)
+      .attr('x', (d) => x(d.value) + 18)
       .style('font-size', '13px')
       .style('font-weight', 'bold')
       .text((d) => `${d3.format('.1f')(d.value)} miles`);
@@ -108,7 +144,7 @@ const MilesPerDollarViz = () => {
         Select a state to load local energy prices, then adjust to compare
         how many miles you can travel on a single dollar. Data is provided
         by the U.S. Energy Information Administration and AAA, and assumes an
-        EV efficiency of 3 miles/kWh and a gas car MPG of 24 (the 2026 U.S.
+        EV efficiency of 4 miles/kWh and a gas car MPG of 24 (the 2026 U.S.
         passenger car averages).
       </p>
 
@@ -121,7 +157,7 @@ const MilesPerDollarViz = () => {
       <div className="viz-legend">
         <span className="legend-item" style={{ color: '#FFAA00' }}>&#9632; Gas car</span>
         <span className="legend-item electric" style={{ color: '#364F6B' }}>&#9632; EV (Retail)</span>
-        <span className="legend-item" style={{ color: '#519A66' }}>&#9632; EV (off-peak, 40% discount)</span>
+        <span className="legend-item" style={{ color: '#519A66' }}>&#9632; EV (off-peak, 35% discount)</span>
       </div>
 
       <D3Chart
@@ -144,7 +180,7 @@ const MilesPerDollarViz = () => {
             value={electricRate}
             onChange={(e) => setElectricRate(parseFloat(e.target.value))}
           />
-          <span className="sub-label">Off-peak: ${offPeakRate.toFixed(3)}/kWh (40% discount)</span>
+          <span className="sub-label">Off-peak: ${offPeakRate.toFixed(3)}/kWh (30% discount)</span>
         </div>
 
         <div className="control-group">
@@ -164,17 +200,18 @@ const MilesPerDollarViz = () => {
 
         <div className="control-group">
           <label htmlFor="ev-efficiency">
-            EV Efficiency (mi/kWh): <strong>{evEfficiency.toFixed(1)}</strong>
+            Base EV Efficiency (mi/kWh): <strong>{evEfficiency.toFixed(1)}</strong>
           </label>
           <input
             id="ev-efficiency"
             type="range"
-            min="2.0"
+            min="2.5"
             max="5.0"
             step="0.1"
             value={evEfficiency}
             onChange={(e) => setEvEfficiency(parseFloat(e.target.value))}
           />
+          <span className="sub-label">Temp-adjusted: {adjEfficiency.toFixed(2)} mi/kWh ({meanTemp.toFixed(0)}&deg;C)</span>
         </div>
 
         <div className="control-group">
