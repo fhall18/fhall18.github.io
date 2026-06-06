@@ -6,7 +6,16 @@
     "node": true,
     "jest": true
   },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".mjs"],
+        "moduleDirectory": ["node_modules", "src"]
+      }
+    }
+  },
   "rules": {
+    "import/no-unresolved": [2, { "ignore": ["react-ga4", "@fortawesome"] }],
     "jsx-a11y/anchor-is-valid": ["error", {
       "components": ["Link"],
       "specialLink": ["to", "hrefLeft", "hrefRight"],
