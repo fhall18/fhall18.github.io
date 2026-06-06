@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { Link, useParams, Navigate } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router-dom';
 
 import Main from '../layouts/Main';
 import data from '../data/projects';
@@ -29,7 +29,7 @@ const ProjectDetail = () => {
       <article className="post" id="project-detail">
         <header>
           <div className="title">
-            <h2><Link to="/projects">Projects</Link> / {project.title}</h2>
+            <h2>{project.title}</h2>
             <p>{project.subtitle}</p>
           </div>
         </header>

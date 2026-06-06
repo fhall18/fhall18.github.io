@@ -1,22 +1,22 @@
 const skills = [
   {
     title: 'Javascript',
-    competency: 2,
+    competency: 3,
     category: ['Web Development', 'Languages', 'Javascript'],
   },
   {
     title: 'Node.JS',
-    competency: 1,
+    competency: 3,
     category: ['Web Development', 'Javascript'],
   },
   {
     title: 'React',
-    competency: 1,
+    competency: 3,
     category: ['Web Development', 'Javascript'],
   },
   {
     title: 'Next.JS',
-    competency: 1,
+    competency: 3,
     category: ['Web Development', 'Javascript'],
   },
   // {
@@ -26,8 +26,13 @@ const skills = [
   // },
   {
     title: 'Amazon Web Services',
-    competency: 3,
+    competency: 4,
     category: ['Web Development', 'Tools'],
+  },
+  {
+    title: 'Gurobi',
+    competency: 4,
+    category: ['Data Science', 'Python'],
   },
   // {
   //   title: 'Heroku',
@@ -64,11 +69,11 @@ const skills = [
     competency: 5,
     category: ['Web Development', 'Python'],
   },
-  // {
-  //   title: 'D3',
-  //   competency: 2,
-  //   category: ['Web Development', 'Javascript'],
-  // },
+  {
+    title: 'D3',
+    competency: 4,
+    category: ['Web Development', 'Javascript'],
+  },
   {
     title: 'Flask',
     competency: 3,
@@ -81,7 +86,7 @@ const skills = [
   },
   {
     title: 'Git',
-    competency: 3,
+    competency: 5,
     category: ['Tools'],
   },
   // {
@@ -96,7 +101,7 @@ const skills = [
   // },
   {
     title: 'Docker',
-    competency: 2,
+    competency: 3,
     category: ['Tools', 'Data Engineering'],
   },
   {
@@ -196,8 +201,13 @@ const skills = [
   },
   {
     title: 'Snowflake',
-    competency: 3,
+    competency: 5,
     category: ['Data Science', 'Databases', 'ML Engineering'],
+  },
+  {
+    title: 'dbt',
+    competency: 3.5,
+    category: ['Data Science', 'Databases', 'Data Engineering'],
   },
   {
     title: 'Scikit-Learn',
@@ -218,11 +228,6 @@ const skills = [
     title: 'Mypy',
     competency: 2,
     category: ['Python'],
-  },
-  {
-    title: 'Tableau',
-    competency: 5,
-    category: ['Tools', 'Data Science'],
   },
   {
     title: 'Pylint',

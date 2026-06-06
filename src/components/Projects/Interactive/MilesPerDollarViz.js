@@ -40,9 +40,9 @@ const MilesPerDollarViz = () => {
     const milesPerDollarEVOffPeak = evEfficiency / offPeakRate;
 
     return [
-      { category: 'Gas Car', value: milesPerDollarGas, color: '#e74c3c' },
-      { category: 'EV (Retail Rate)', value: milesPerDollarEV, color: '#3498db' },
-      { category: 'EV (Off-Peak Rate)', value: milesPerDollarEVOffPeak, color: '#27ae60' },
+      { category: 'Gas car', value: milesPerDollarGas, color: '#FFAA00' },
+      { category: 'EV', value: milesPerDollarEV, color: '#364F6B' },
+      { category: 'EV (off-peak)', value: milesPerDollarEVOffPeak, color: '#519A66' },
     ];
   };
 
@@ -77,7 +77,7 @@ const MilesPerDollarViz = () => {
       .attr('y', dim.innerHeight + 40)
       .attr('text-anchor', 'middle')
       .style('font-size', '12px')
-      .text('Miles per $1');
+      .text('Distance in miles');
 
     g.selectAll('.bar')
       .data(data)
@@ -103,16 +103,31 @@ const MilesPerDollarViz = () => {
 
   return (
     <div className="interactive-viz">
-      <h3>How Far Can $1 Take You?</h3>
+      <h3>How far can you get on $1?</h3>
       <p className="viz-description">
         Select a state to load local energy prices, then adjust to compare
-        how many miles you can travel on a single dollar.
+        how many miles you can travel on a single dollar. Data is provided
+        by the U.S. Energy Information Administration and AAA, and assumes an
+        EV efficiency of 3 miles/kWh and a gas car MPG of 24 (the 2026 U.S.
+        passenger car averages).
       </p>
 
       <HexMap
         selectedState={selectedState}
         onStateSelect={handleStateChange}
         stateData={stateData}
+      />
+
+      <div className="viz-legend">
+        <span className="legend-item" style={{ color: '#FFAA00' }}>&#9632; Gas car</span>
+        <span className="legend-item electric" style={{ color: '#364F6B' }}>&#9632; EV (Retail)</span>
+        <span className="legend-item" style={{ color: '#519A66' }}>&#9632; EV (off-peak, 40% discount)</span>
+      </div>
+
+      <D3Chart
+        renderChart={renderChart}
+        data={chartData}
+        height={280}
       />
 
       <div className="viz-controls">
@@ -176,18 +191,6 @@ const MilesPerDollarViz = () => {
             onChange={(e) => setGasCarMpg(parseInt(e.target.value, 10))}
           />
         </div>
-      </div>
-
-      <D3Chart
-        renderChart={renderChart}
-        data={chartData}
-        height={280}
-      />
-
-      <div className="viz-legend">
-        <span className="legend-item fossil">&#9632; Gas Car</span>
-        <span className="legend-item electric">&#9632; EV (Retail)</span>
-        <span className="legend-item" style={{ color: '#27ae60' }}>&#9632; EV (Off-Peak, 40% discount)</span>
       </div>
     </div>
   );

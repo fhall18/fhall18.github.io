@@ -56,11 +56,13 @@
 
 .hex-map-container {
   margin-bottom: 1.5em;
-  max-width: 600px;
+  width: 100%;
 
   svg {
     display: block;
-    max-height: 320px;
+    width: 100%;
+    height: auto;
+    min-height: 300px;
   }
 
   .hex-map-caption {

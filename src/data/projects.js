@@ -1,14 +1,16 @@
 // TODO Add a couple lines about each project
 const data = [
   {
-    title: 'How Far Can a Dollar Take You?',
-    subtitle: 'Interactive electrification cost explorer',
-    slug: 'how-far-can-a-dollar-take-you',
+    title: 'How Far Does a Dollar Go?',
+    subtitle: 'Interactive energy travel cost explorer',
+    slug: 'how-far-does-a-dollar-go',
     image: '/images/projects/dollar.jpg',
     date: '2026-06-01',
     desc:
-      'How far can a dollar get out when you electrify? But acutally, '
-      + 'how many miles can you travel on a dollar?',
+      'The age old idiom of "how far does a dollar go?" is especially relevant when it comes to what car you drive. '
+      + 'This tool allows you to explore how many miles you can travel on a single dollar using different fuel sources. '
+      + 'Electric vehicle (EV) are 4x more efficient than gas cars, and gas prices are extremely volatile. '
+      + 'Click to see how far your dollar can take you!',
     interactive: 'MilesPerDollarViz',
   },
   {

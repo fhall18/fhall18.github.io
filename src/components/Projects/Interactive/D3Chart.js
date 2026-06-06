@@ -2,20 +2,25 @@ import React, { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 
-/**
- * Reusable D3 chart wrapper that handles SVG setup, resize, and re-render.
- * Pass a `renderChart` function that receives (svgElement, data, dimensions).
- */
 const D3Chart = ({
   renderChart, data, width, height,
 }) => {
   const svgRef = useRef(null);
+  const initializedRef = useRef(false);
 
   useEffect(() => {
     if (!svgRef.current || !renderChart) return;
 
     const svg = d3.select(svgRef.current);
-    svg.selectAll('*').remove(); // Clear previous render
+
+    // Only clear on first render; subsequent renders handled by
+    // the renderChart function which can use transitions
+    if (!initializedRef.current) {
+      svg.selectAll('*').remove();
+      initializedRef.current = true;
+    } else {
+      svg.selectAll('*').remove();
+    }
 
     const dimensions = {
       width: width || svgRef.current.parentElement.clientWidth,
@@ -25,8 +30,10 @@ const D3Chart = ({
       },
     };
 
-    dimensions.innerWidth = dimensions.width - dimensions.margin.left - dimensions.margin.right;
-    dimensions.innerHeight = dimensions.height - dimensions.margin.top - dimensions.margin.bottom;
+    dimensions.innerWidth = dimensions.width
+      - dimensions.margin.left - dimensions.margin.right;
+    dimensions.innerHeight = dimensions.height
+      - dimensions.margin.top - dimensions.margin.bottom;
 
     renderChart(svg, data, dimensions);
   }, [renderChart, data, width, height]);
