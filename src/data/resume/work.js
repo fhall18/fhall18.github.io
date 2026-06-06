@@ -35,6 +35,7 @@ const work = [
     position: 'Resource Planner',
     url: 'https://burlingtonelectric.com',
     startDate: '2016-09-01',
+    endDate: '2024-03-01',
     summary: `Burlington Electric is ambitiously working to transform the City of Burlington to become the 
     first Net Zero Energy city in the world. This task requires careful planning with innovative programs, 
     designed to generate community engagement while supporting equitable progress towards a cleaner energy system.
