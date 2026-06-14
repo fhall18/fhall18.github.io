@@ -124,13 +124,12 @@ const HexMap = ({
       group.select('.hex-path')
         .attr('fill', price ? colorScale(price) : '#ddd');
       group.select('.hex-label')
-        .style('fill', price && price > (maxPrice + minPrice) / 2 ? '#fff' : '#333');
+        .style('fill', price && price > (maxPrice + minPrice) / 2 ? '#fff' : '#fff');
     });
   }, [stateData]);
 
   useEffect(() => {
-    const timer = setTimeout(updateColors, 50);
-    return () => clearTimeout(timer);
+    updateColors();
   }, [updateColors]);
 
   // Update selection styling without redrawing
@@ -159,11 +158,11 @@ const HexMap = ({
 
       group.select('.hex-label')
         .style('font-weight', isSelected ? 'bold' : 'normal')
-        .style('fill', isSelected ? '#1976d2' : null);
+        .style('fill', '#fff');
 
       if (isSelected) group.raise();
     });
-  }, [selectedState]);
+  }, [selectedState, stateData]);
 
   return (
     <div className="hex-map-container">

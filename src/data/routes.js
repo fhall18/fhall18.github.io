@@ -25,5 +25,4 @@ const routes = [
     path: '/contact',
   },
 ];
-
 export default routes;

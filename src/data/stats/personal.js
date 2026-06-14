@@ -32,9 +32,9 @@ const data = [
   {
     key: 'sustainable',
     label: 'Last sustainable purchase',
-    value: 'Surly Preamble',
+    value: 'Weatherization',
     link:
-      'https://surlybikes.com/bikes/preamble',
+      'https://www.burlingtonelectric.com/weatherization',
   },
 ];
 
