@@ -15,7 +15,7 @@
     }
   },
   "rules": {
-    "import/no-unresolved": [2, { "ignore": ["react-ga4", "@fortawesome"] }],
+    "import/no-unresolved": [2, { "ignore": ["react-ga4", "@fortawesome", "hyparquet"] }],
     "jsx-a11y/anchor-is-valid": ["error", {
       "components": ["Link"],
       "specialLink": ["to", "hrefLeft", "hrefRight"],

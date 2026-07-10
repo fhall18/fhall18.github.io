@@ -7,6 +7,7 @@ import data from '../data/projects';
 // Map of interactive component names to their lazy-loaded modules
 const interactiveComponents = {
   MilesPerDollarViz: lazy(() => import('../components/Projects/Interactive/MilesPerDollarViz')),
+  HabForecastViz: lazy(() => import('../components/Projects/Interactive/HabForecastViz')),
 };
 
 const ProjectDetail = () => {

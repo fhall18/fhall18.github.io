@@ -1,6 +1,18 @@
 // TODO Add a couple lines about each project
 const data = [
   {
+    title: 'HAB Forecast',
+    subtitle: 'Harmful algal bloom prediction model',
+    slug: 'hab-forecast',
+    image: '/images/projects/hab_forecast.jpg',
+    date: '2026-07-01',
+    desc:
+      'A machine learning inference pipeline that forecasts harmful algal bloom (cyanobacteria) levels '
+      + 'using weather and environmental features. Predictions are updated regularly from '
+      + 'the kuanos project.',
+    interactive: 'HabForecastViz',
+  },
+  {
     title: 'How Far Does a Dollar Go?',
     subtitle: 'Interactive energy travel cost explorer',
     slug: 'how-far-does-a-dollar-go',
