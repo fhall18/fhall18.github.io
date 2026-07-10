@@ -334,6 +334,27 @@ const HabForecastViz = () => {
       .style('font-size', '12px')
       .text('HAB risk index');
 
+    // Current time indicator
+    const now = new Date();
+    const [xTimeMin, xTimeMax] = xTime.domain();
+    if (now >= xTimeMin && now <= xTimeMax) {
+      g.append('line')
+        .attr('x1', xTime(now))
+        .attr('x2', xTime(now))
+        .attr('y1', 0)
+        .attr('y2', innerHeight)
+        .attr('stroke', '#000')
+        .attr('stroke-width', 1.5)
+        .attr('stroke-dasharray', '5,5')
+        .attr('opacity', 0.7);
+      g.append('text')
+        .attr('x', xTime(now) + 5)
+        .attr('y', 25)
+        .style('font-size', '11px')
+        .style('fill', '#000')
+        .text('Current time');
+    }
+
     // Tooltip interaction
     const tooltip = d3.select(container).select('.hab-tooltip');
 
@@ -510,6 +531,27 @@ const HabForecastViz = () => {
         .attr('stroke', '#FFAA00')
         .attr('stroke-width', 2.5)
         .attr('d', line);
+    }
+
+    // Current time indicator
+    const now = new Date();
+    const [xMin, xMax] = x.domain();
+    if (now >= xMin && now <= xMax) {
+      g.append('line')
+        .attr('x1', x(now))
+        .attr('x2', x(now))
+        .attr('y1', 0)
+        .attr('y2', innerHeight)
+        .attr('stroke', '#000')
+        .attr('stroke-width', 1.5)
+        .attr('stroke-dasharray', '5,5')
+        .attr('opacity', 0.7);
+      g.append('text')
+        .attr('x', x(now) + 5)
+        .attr('y', 25)
+        .style('font-size', '11px')
+        .style('fill', '#000')
+        .text('Current time');
     }
 
     // Legend - horizontal row at top
