@@ -66,7 +66,7 @@ const HabForecastViz = () => {
         setPredictedAtOptions(uniquePredictedAt);
         if (uniquePredictedAt.length > 0) {
           setRangeStart(0);
-          setRangeEnd(0);
+          setRangeEnd(Math.min(2, uniquePredictedAt.length - 1));
         }
         setData(rows);
       } catch (err) {
@@ -129,13 +129,47 @@ const HabForecastViz = () => {
     if (m === 0) return;
 
     // Build matrix: rows = time points, columns = forecast layers
-    // Normalize each value by n so the total stack height is at most 1
-    const matrix = allDates.map((t) => {
+    // Normalize each value by the number of forecasts present at that time point
+    // so the sum equals the average value across overlapping forecasts
+    const FADE_POINTS = 6;
+    const rawMatrix = allDates.map((t) => {
       const row = {};
+      let count = 0;
       sortedSelected.forEach((ts, i) => {
-        row[i] = (seriesMap[ts].get(t) || 0) / n;
+        const val = seriesMap[ts].get(t) || 0;
+        row[i] = val;
+        if (val > 0) count += 1;
+      });
+      // Normalize by number of active forecasts at this time point
+      const divisor = count || 1;
+      sortedSelected.forEach((ts, i) => {
+        row[i] /= divisor;
       });
       return row;
+    });
+    // Smooth edges: fade each layer in/out over FADE_POINTS
+    const matrix = rawMatrix.map((row) => ({ ...row }));
+    sortedSelected.forEach((ts, i) => {
+      // Find first and last non-zero indices for this layer
+      let first = -1;
+      let last = -1;
+      for (let j = 0; j < matrix.length; j += 1) {
+        if (rawMatrix[j][i] > 0) {
+          if (first === -1) first = j;
+          last = j;
+        }
+      }
+      if (first === -1) return;
+      // Fade in
+      for (let j = first; j < Math.min(first + FADE_POINTS, matrix.length); j += 1) {
+        const t = (j - first) / FADE_POINTS;
+        matrix[j][i] = rawMatrix[j][i] * t;
+      }
+      // Fade out
+      for (let j = last; j > Math.max(last - FADE_POINTS, -1); j -= 1) {
+        const t = (last - j) / FADE_POINTS;
+        matrix[j][i] = rawMatrix[j][i] * t;
+      }
     });
 
     // Stack with silhouette offset (centered around 0)
@@ -269,7 +303,7 @@ const HabForecastViz = () => {
       .attr('x', -innerHeight / 2)
       .attr('text-anchor', 'middle')
       .style('font-size', '12px')
-      .text('Cyanobacteria risk');
+      .text('HAB risk index');
 
     // Tooltip interaction
     const tooltip = d3.select(container).select('.hab-tooltip');
@@ -375,7 +409,7 @@ const HabForecastViz = () => {
       .attr('x', -innerHeight / 2)
       .attr('text-anchor', 'middle')
       .style('font-size', '12px')
-      .text('Cyanobacteria risk');
+      .text('HAB risk index');
 
     const line = d3.line()
       .defined((d) => d.predicted != null)
@@ -484,11 +518,24 @@ const HabForecastViz = () => {
       />
       <h3>Harmful Algal Bloom Forecast</h3>
       <p style={{ fontSize: '14px', color: '#666' }}>
-        Cyanobacteria index predictions vs. observed values
+        <h4>IMPORTANT NOTE</h4>
+        {' '}
+        <a
+          href="https://www.burlingtonvt.gov/1219/Beach-Closure-Tracker"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Burlington, VT Beach Closure Tracker
+        </a>
+        {' '}
+        has the most accurate information.
+        This tool is for personal use only and should not
+        be used to make decisions about swimming or other
+        recreational activities where water quality is a consideration.
       </p>
       <div style={{ marginBottom: '12px' }}>
         <span style={{ fontSize: '11px', display: 'block', marginBottom: '4px' }}>
-          Forecast range (latest in range shown in orange):
+          Forecast runs:
         </span>
         {predictedAtOptions.length > 1 && (() => {
           const maxIdx = predictedAtOptions.length - 1;
@@ -568,6 +615,7 @@ const HabForecastViz = () => {
           );
         })()}
       </div>
+      <h4 style={{ margin: '0 0 0px 0' }}>Streamgraph Forecasts</h4>
       <div style={{ position: 'relative' }}>
         <svg ref={svgRef} style={{ width: '100%', height: 'auto' }} />
         <div
@@ -586,7 +634,7 @@ const HabForecastViz = () => {
         />
       </div>
       <div style={{ marginTop: '24px' }}>
-        <h4 style={{ margin: '0 0 4px 0' }}>Line Chart</h4>
+        <h4 style={{ margin: '0 0 4px 0' }}>Actual Forecasts</h4>
         <svg ref={lineSvgRef} style={{ width: '100%', height: 'auto' }} />
       </div>
       <p style={{ fontSize: '12px', color: '#999', marginTop: '8px' }}>

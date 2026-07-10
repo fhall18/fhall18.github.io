@@ -7,9 +7,14 @@ const data = [
     image: '/images/projects/hab_forecast.jpg',
     date: '2026-07-01',
     desc:
-      'A machine learning inference pipeline that forecasts harmful algal bloom (cyanobacteria) levels '
-      + 'using weather and environmental features. Predictions are updated regularly from '
-      + 'the kuanos project.',
+      'This tool pulls in the latest weather forecasts and beach closure data, '
+      + 'runs it through a time-series forecast model trained on historical '
+      + 'beach closures, and serves up predictions in this interactive dashboard — '
+      + 'so you can find out how your beach day may look before you pack the '
+      + 'sunscreen. Predictions are updated regularly from my kuanos (κύανος) project. '
+      + 'Note this is a personal project and actual information regarding beach '
+      + 'closures should be obtained from the official state of Vermont or City of '
+      + 'Burlington beach resources.',
     interactive: 'HabForecastViz',
   },
   {
