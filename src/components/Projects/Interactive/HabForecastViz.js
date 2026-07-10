@@ -5,6 +5,7 @@ import * as d3 from 'd3';
 import { parquetRead } from 'hyparquet';
 
 const PARQUET_URL = 'https://raw.githubusercontent.com/fhall18/kuanos/main/data/predictions.parquet';
+const BEACH_STATUS_URL = 'https://raw.githubusercontent.com/fhall18/kuanos/main/data/beach_status.parquet';
 
 const formatET = (isoStr) => {
   const d = new Date(isoStr);
@@ -24,6 +25,7 @@ const HabForecastViz = () => {
   const [rangeEnd, setRangeEnd] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [beachStatus, setBeachStatus] = useState([]);
   const svgRef = useRef(null);
   const lineSvgRef = useRef(null);
 
@@ -69,6 +71,33 @@ const HabForecastViz = () => {
           setRangeEnd(Math.min(2, uniquePredictedAt.length - 1));
         }
         setData(rows);
+
+        // Fetch beach status data
+        // updated_at is in local time (America/New_York),
+        // matching the predictions datetime_local column.
+        const bsResp = await fetch(BEACH_STATUS_URL);
+        if (bsResp.ok) {
+          const bsBuf = await bsResp.arrayBuffer();
+          const statusRows = [];
+          await parquetRead({
+            file: bsBuf,
+            onComplete: (bsResult) => {
+              bsResult.forEach((r) => {
+                const name = r[0]; // beach_name
+                const st = r[1]; // status
+                const updatedAt = r[2]; // updated_at (ET)
+                if (name && st && updatedAt) {
+                  statusRows.push({
+                    beach: name,
+                    status: st.toLowerCase(),
+                    updatedAt: new Date(updatedAt),
+                  });
+                }
+              });
+            },
+          });
+          setBeachStatus(statusRows);
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -386,10 +415,8 @@ const HabForecastViz = () => {
       .domain(d3.extent(allPoints, (d) => d.date))
       .range([0, innerWidth]);
 
-    const allValues = allPoints.map((d) => d.predicted).filter((v) => v != null);
     const y = d3.scaleLinear()
-      .domain([0, d3.max(allValues) * 1.1])
-      .nice()
+      .domain([0, 1])
       .range([innerHeight, 0]);
 
     g.append('g')
@@ -410,6 +437,52 @@ const HabForecastViz = () => {
       .attr('text-anchor', 'middle')
       .style('font-size', '12px')
       .text('HAB risk index');
+
+    // Beach status shading
+    // Build aggregated worst-status time series from beach data
+    if (beachStatus.length > 0) {
+      // Get unique update times sorted ascending
+      const statusTimes = [...new Set(
+        beachStatus.map((s) => s.updatedAt.getTime()),
+      )].sort((a, b) => a - b);
+
+      // For each time, find worst status across all beaches
+      // Priority: closure > warning > open
+      const statusPriority = (s) => {
+        if (s.includes('clos')) return 2;
+        if (s.includes('warn') || s.includes('advisory')) return 1;
+        return 0;
+      };
+
+      const intervals = statusTimes.map((t) => {
+        const atTime = beachStatus.filter(
+          (s) => s.updatedAt.getTime() === t,
+        );
+        const worst = d3.max(atTime, (s) => statusPriority(s.status));
+        return { time: new Date(t), level: worst };
+      });
+
+      // Draw shaded rectangles for each interval
+      // Only shade closure (red) and warning (orange), not open (green)
+      const [xMin, xMax] = x.domain();
+      for (let idx = 0; idx < intervals.length; idx += 1) {
+        const iv = intervals[idx];
+        if (iv.level === 0) continue; // eslint-disable-line no-continue
+        const tStart = Math.max(iv.time, xMin);
+        const tEnd = idx < intervals.length - 1
+          ? Math.min(intervals[idx + 1].time, xMax)
+          : xMax;
+        if (tStart >= tEnd) continue; // eslint-disable-line no-continue
+        const color = iv.level >= 2 ? '#f8d7da' : '#fff3cd';
+        g.append('rect')
+          .attr('x', x(tStart))
+          .attr('width', x(tEnd) - x(tStart))
+          .attr('y', 0)
+          .attr('height', innerHeight)
+          .attr('fill', color)
+          .attr('opacity', 0.35);
+      }
+    }
 
     const line = d3.line()
       .defined((d) => d.predicted != null)
@@ -439,39 +512,73 @@ const HabForecastViz = () => {
         .attr('d', line);
     }
 
-    // Legend
+    // Legend - horizontal row at top
     const legend = g.append('g')
-      .attr('transform', `translate(${innerWidth - 160}, 0)`);
+      .attr('transform', 'translate(0, -15)');
 
+    let legendX = 0;
+
+    // Latest forecast
     legend.append('line')
-      .attr('x1', 0)
-      .attr('x2', 20)
+      .attr('x1', legendX)
+      .attr('x2', legendX + 20)
       .attr('y1', 0)
       .attr('y2', 0)
       .attr('stroke', '#FFAA00')
       .attr('stroke-width', 2.5);
     legend.append('text')
-      .attr('x', 25)
+      .attr('x', legendX + 25)
       .attr('y', 4)
       .style('font-size', '11px')
       .text('Latest forecast');
+    legendX += 130;
 
+    // Prior forecasts
     if (historicalSeries.length > 0) {
       legend.append('line')
-        .attr('x1', 0)
-        .attr('x2', 20)
-        .attr('y1', 18)
-        .attr('y2', 18)
+        .attr('x1', legendX)
+        .attr('x2', legendX + 20)
+        .attr('y1', 0)
+        .attr('y2', 0)
         .attr('stroke', '#364F6B')
         .attr('stroke-width', 1.5)
         .attr('opacity', 0.6);
       legend.append('text')
-        .attr('x', 25)
-        .attr('y', 22)
+        .attr('x', legendX + 25)
+        .attr('y', 4)
         .style('font-size', '11px')
         .text('Prior forecasts');
+      legendX += 120;
     }
-  }, [data, predictedAtOptions, rangeStart, rangeEnd]);
+
+    // Beach status legend entries (always show closure and warning)
+    legend.append('rect')
+      .attr('x', legendX)
+      .attr('y', -6)
+      .attr('width', 20)
+      .attr('height', 12)
+      .attr('fill', '#f8d7da')
+      .attr('opacity', 0.6);
+    legend.append('text')
+      .attr('x', legendX + 25)
+      .attr('y', 4)
+      .style('font-size', '11px')
+      .text('Beach closure');
+    legendX += 125;
+
+    legend.append('rect')
+      .attr('x', legendX)
+      .attr('y', -6)
+      .attr('width', 20)
+      .attr('height', 12)
+      .attr('fill', '#fff3cd')
+      .attr('opacity', 0.6);
+    legend.append('text')
+      .attr('x', legendX + 25)
+      .attr('y', 4)
+      .style('font-size', '11px')
+      .text('Beach warning');
+  }, [data, predictedAtOptions, rangeStart, rangeEnd, beachStatus]);
 
   useEffect(() => {
     drawChart();
