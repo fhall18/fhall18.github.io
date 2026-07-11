@@ -7,6 +7,25 @@ import { parquetRead } from 'hyparquet';
 const PARQUET_URL = 'https://raw.githubusercontent.com/fhall18/kuanos/main/data/predictions.parquet';
 const BEACH_STATUS_URL = 'https://raw.githubusercontent.com/fhall18/kuanos/main/data/beach_status.parquet';
 
+// Get current time in ET timezone
+const getCurrentTimeET = () => {
+  const now = new Date();
+  // Format current time as it would appear in ET, then parse it
+  // This gives us a Date object that aligns with how datetime_local strings are parsed
+  const etString = now.toLocaleString('en-US', {
+    timeZone: 'UTC',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  });
+  // Parse the ET string (browser will interpret in local timezone, matching our data parsing)
+  return new Date(etString.replace(',', ''));
+};
+
 const formatET = (isoStr) => {
   const d = new Date(isoStr);
   return d.toLocaleString('en-US', {
@@ -213,7 +232,7 @@ const HabForecastViz = () => {
     const width = container.clientWidth || 700;
     const height = 360;
     const margin = {
-      top: 30, right: 60, bottom: 50, left: 20,
+      top: 30, right: 30, bottom: 50, left: 55,
     };
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
@@ -245,13 +264,13 @@ const HabForecastViz = () => {
     // High: sum 0.3–1.0 → stream within ±0.5
     const riskBands = [
       {
-        top: 0.05, bottom: -0.05, color: '#d4edda', label: 'Low',
+        top: 0.05, bottom: -0.05, color: '#7e7e7e', label: 'Low',
       },
       {
-        top: 0.15, bottom: 0.05, color: '#fff3cd', label: 'Medium',
+        top: 0.15, bottom: 0.05, color: '#d0d0d0', label: 'Medium',
       },
       {
-        top: 0.5, bottom: 0.15, color: '#f8d7da', label: 'High',
+        top: 0.5, bottom: 0.15, color: '#ffffff', label: 'High',
       },
     ];
     riskBands.forEach((band) => {
@@ -271,11 +290,11 @@ const HabForecastViz = () => {
         .attr('height', y(-band.top) - y(-band.bottom))
         .attr('fill', band.color)
         .attr('opacity', 0.3);
-      // Label just outside the right edge of the plot (upper side only)
+      // Label on the left side of the plot (upper side only)
       g.append('text')
-        .attr('x', innerWidth + 6)
+        .attr('x', -4)
         .attr('y', y((band.top + band.bottom) / 2))
-        .attr('text-anchor', 'start')
+        .attr('text-anchor', 'end')
         .attr('dominant-baseline', 'middle')
         .style('font-size', '10px')
         .style('fill', '#666')
@@ -328,25 +347,25 @@ const HabForecastViz = () => {
     // Y-axis label
     g.append('text')
       .attr('transform', 'rotate(-90)')
-      .attr('y', -8)
+      .attr('y', -48)
       .attr('x', -innerHeight / 2)
       .attr('text-anchor', 'middle')
       .style('font-size', '12px')
       .text('HAB risk index');
 
     // Current time indicator
-    const now = new Date();
+    const now = getCurrentTimeET();
     const [xTimeMin, xTimeMax] = xTime.domain();
     if (now >= xTimeMin && now <= xTimeMax) {
       g.append('line')
         .attr('x1', xTime(now))
         .attr('x2', xTime(now))
-        .attr('y1', 0)
-        .attr('y2', innerHeight)
+        .attr('y1', 3)
+        .attr('y2', innerHeight - 3)
         .attr('stroke', '#000')
-        .attr('stroke-width', 1.5)
+        .attr('stroke-width', 1)
         .attr('stroke-dasharray', '5,5')
-        .attr('opacity', 0.7);
+        .attr('opacity', 0.9);
       g.append('text')
         .attr('x', xTime(now) + 5)
         .attr('y', 25)
@@ -440,6 +459,22 @@ const HabForecastViz = () => {
       .domain([0, 1])
       .range([innerHeight, 0]);
 
+    // Risk band backgrounds for y-axis
+    const riskBands = [
+      { top: 0.1, bottom: 0, color: '#7e7e7e' }, // Low 7e7e7e
+      { top: 0.3, bottom: 0.1, color: '#d0d0d0' }, // Medium d0d0d0
+      { top: 1.0, bottom: 0.3, color: '#ffffff' }, // High ffffff
+    ];
+    riskBands.forEach((band) => {
+      g.append('rect')
+        .attr('x', 0)
+        .attr('width', innerWidth)
+        .attr('y', y(band.top))
+        .attr('height', y(band.bottom) - y(band.top))
+        .attr('fill', band.color)
+        .attr('opacity', 0.3);
+    });
+
     g.append('g')
       .attr('transform', `translate(0,${innerHeight})`)
       .call(d3.axisBottom(x).ticks(6).tickFormat(d3.timeFormat('%b %d')))
@@ -453,7 +488,7 @@ const HabForecastViz = () => {
 
     g.append('text')
       .attr('transform', 'rotate(-90)')
-      .attr('y', -42)
+      .attr('y', -48)
       .attr('x', -innerHeight / 2)
       .attr('text-anchor', 'middle')
       .style('font-size', '12px')
@@ -494,14 +529,14 @@ const HabForecastViz = () => {
           ? Math.min(intervals[idx + 1].time, xMax)
           : xMax;
         if (tStart >= tEnd) continue; // eslint-disable-line no-continue
-        const color = iv.level >= 2 ? '#f8d7da' : '#fff3cd';
+        const color = iv.level >= 2 ? '#ff3c00' : '#f5c124';
         g.append('rect')
           .attr('x', x(tStart))
           .attr('width', x(tEnd) - x(tStart))
           .attr('y', 0)
           .attr('height', innerHeight)
           .attr('fill', color)
-          .attr('opacity', 0.35);
+          .attr('opacity', 0.7);
       }
     }
 
@@ -534,18 +569,18 @@ const HabForecastViz = () => {
     }
 
     // Current time indicator
-    const now = new Date();
+    const now = getCurrentTimeET();
     const [xMin, xMax] = x.domain();
     if (now >= xMin && now <= xMax) {
       g.append('line')
         .attr('x1', x(now))
         .attr('x2', x(now))
-        .attr('y1', 0)
+        .attr('y1', 3)
         .attr('y2', innerHeight)
         .attr('stroke', '#000')
-        .attr('stroke-width', 1.5)
+        .attr('stroke-width', 1.2)
         .attr('stroke-dasharray', '5,5')
-        .attr('opacity', 0.7);
+        .attr('opacity', 0.9);
       g.append('text')
         .attr('x', x(now) + 5)
         .attr('y', 25)
@@ -599,8 +634,8 @@ const HabForecastViz = () => {
       .attr('y', -6)
       .attr('width', 20)
       .attr('height', 12)
-      .attr('fill', '#f8d7da')
-      .attr('opacity', 0.6);
+      .attr('fill', '#ff3c00')
+      .attr('opacity', 0.7);
     legend.append('text')
       .attr('x', legendX + 25)
       .attr('y', 4)
@@ -613,8 +648,8 @@ const HabForecastViz = () => {
       .attr('y', -6)
       .attr('width', 20)
       .attr('height', 12)
-      .attr('fill', '#fff3cd')
-      .attr('opacity', 0.6);
+      .attr('fill', '#f5c124')
+      .attr('opacity', 0.7);
     legend.append('text')
       .attr('x', legendX + 25)
       .attr('y', 4)
@@ -644,7 +679,7 @@ const HabForecastViz = () => {
           background: #364F6B;
           cursor: pointer;
           border: none;
-          margin-top: 0;
+          margin-top: 3px;
         }
         .range-thumb::-moz-range-thumb {
           pointer-events: all;
@@ -656,10 +691,10 @@ const HabForecastViz = () => {
           border: none;
         }
         .range-thumb::-webkit-slider-runnable-track {
-          height: 14px;
+          height: 20px;
         }
         .range-thumb::-moz-range-track {
-          height: 14px;
+          height: 20px;
           background: transparent;
         }
       `,
@@ -699,12 +734,17 @@ const HabForecastViz = () => {
                 fontSize: '10px',
                 color: '#666',
                 marginBottom: '2px',
+                paddingLeft: '55px',
+                paddingRight: '30px',
               }}
               >
                 <span>{formatET(predictedAtOptions[maxIdx - leftIdx])}</span>
                 <span>{formatET(predictedAtOptions[maxIdx - rightIdx])}</span>
               </div>
-              <div style={{ position: 'relative', height: '14px' }}>
+              <div style={{
+                marginLeft: '55px', marginRight: '30px', position: 'relative', height: '20px',
+              }}
+              >
                 <input
                   type="range"
                   min={0}
@@ -715,7 +755,7 @@ const HabForecastViz = () => {
                     position: 'absolute',
                     width: '100%',
                     top: 0,
-                    height: '14px',
+                    height: '20px',
                     margin: 0,
                     pointerEvents: 'none',
                     appearance: 'none',
@@ -735,7 +775,7 @@ const HabForecastViz = () => {
                     position: 'absolute',
                     width: '100%',
                     top: 0,
-                    height: '14px',
+                    height: '20px',
                     margin: 0,
                     pointerEvents: 'none',
                     appearance: 'none',
@@ -745,15 +785,28 @@ const HabForecastViz = () => {
                   }}
                   className="range-thumb"
                 />
+                {/* Track background */}
                 <div style={{
                   position: 'absolute',
                   top: '50%',
                   transform: 'translateY(-50%)',
                   left: 0,
                   right: 0,
-                  height: '3px',
+                  height: '6px',
                   background: '#ddd',
-                  borderRadius: '2px',
+                  borderRadius: '3px',
+                }}
+                />
+                {/* Filled portion with solid blue */}
+                <div style={{
+                  position: 'absolute',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  left: `${(leftIdx / maxIdx) * 100}%`,
+                  width: `${((rightIdx - leftIdx) / maxIdx) * 100}%`,
+                  height: '6px',
+                  background: '#364F6B',
+                  borderRadius: '3px',
                 }}
                 />
               </div>
@@ -764,7 +817,7 @@ const HabForecastViz = () => {
           );
         })()}
       </div>
-      <h4 style={{ margin: '0 0 0px 0' }}>Streamgraph Forecasts</h4>
+      <h4 style={{ margin: '0 0 0px 0' }}>Stream-graph</h4>
       <div style={{ position: 'relative' }}>
         <svg ref={svgRef} style={{ width: '100%', height: 'auto' }} />
         <div
