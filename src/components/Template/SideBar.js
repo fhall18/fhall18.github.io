@@ -12,14 +12,14 @@ const SideBar = () => (
         <img src={`${PUBLIC_URL}/images/me.jpg`} alt="" />
       </Link>
       <header>
-        <h2>Frederick Hall</h2>
+        <h2>Freddie Hall</h2>
         <p><a href="mailto:frederickchall@gmail.com">frederickchall@gmail.com</a></p>
       </header>
     </section>
 
     <section className="blurb">
       <h2>About</h2>
-      <p>Hi, I&apos;m Frederick. I am a Data Scientist with <a href="https://energyhub.com/">EnergyHub</a> and
+      <p>Hi, I&apos;m Freddie. I am a Data Scientist with <a href="https://energyhub.com/">EnergyHub</a> and
         a <a href="https://vermontcomplexsystems.org/">Vermont Complex Systems</a> graduate.
         I focus on decarbonizing the energy system through electrification and renewable energy.
         Previously, I worked at <a href="https://burlingtonelectric.com">Burlington Electric</a> and <a href="https://greenmountainpower.com/">Green Mountain Power</a>, two leading electric utilities
@@ -35,7 +35,7 @@ const SideBar = () => (
 
     <section id="footer">
       <ContactIcons />
-      <p className="copyright">&copy; Frederick Hall <Link to="/">fhall18.github.io</Link>.</p>
+      <p className="copyright">&copy; Freddie Hall <Link to="/">fhall18.github.io</Link>.</p>
     </section>
   </section>
 );
