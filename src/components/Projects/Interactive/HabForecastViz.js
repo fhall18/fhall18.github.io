@@ -716,6 +716,17 @@ const HabForecastViz = () => {
         This tool is for personal use only and should not
         be used to make decisions about swimming or other
         recreational activities where water quality is a consideration.
+        There is also a
+        {' '}
+        <a
+          href="https://experience.arcgis.com/experience/194da900279747efa8cee01b57fb23e6/page/Tracker"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Public Reporting Tool
+        </a>
+        {' '}
+        that tracks harmful algal bloom occurrences.
       </p>
       <div style={{ marginBottom: '12px' }}>
         <span style={{ fontSize: '11px', display: 'block', marginBottom: '4px' }}>
