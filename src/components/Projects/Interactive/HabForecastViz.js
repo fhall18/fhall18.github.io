@@ -7,13 +7,40 @@ import { parquetRead } from 'hyparquet';
 const PARQUET_URL = 'https://raw.githubusercontent.com/fhall18/kuanos/main/data/predictions.parquet';
 const BEACH_STATUS_URL = 'https://raw.githubusercontent.com/fhall18/kuanos/main/data/beach_status.parquet';
 
-// Get current time in ET timezone
+// Coerce any parquet value to a Date, treating strings without tz as UTC
+const toDate = (val) => {
+  if (!val) return null;
+  if (val instanceof Date) return val;
+  if (typeof val === 'number' || typeof val === 'bigint') return new Date(Number(val));
+  const s = String(val);
+  const hasTz = /[Zz]$/.test(s) || /[+-]\d{2}:?\d{2}$/.test(s);
+  return new Date(hasTz ? s : `${s}Z`);
+};
+
+// Parse a value representing ET wall-clock time into a Date whose UTC = ET numbers
+const parseETString = (val) => {
+  if (!val) return null;
+  if (val instanceof Date) {
+    // Local getters recover original wall-clock numbers regardless of browser tz
+    return new Date(Date.UTC(
+      val.getFullYear(),
+      val.getMonth(),
+      val.getDate(),
+      val.getHours(),
+      val.getMinutes(),
+      val.getSeconds(),
+    ));
+  }
+  if (typeof val === 'number' || typeof val === 'bigint') return new Date(Number(val));
+  const cleaned = String(val).replace(/[+-]\d{2}:?\d{2}$/, '').replace(/Z$/, '');
+  const d = new Date(`${cleaned}Z`);
+  return Number.isNaN(d.getTime()) ? null : d;
+};
+
+// Get current time as a Date whose UTC value = current ET wall-clock
 const getCurrentTimeET = () => {
-  const now = new Date();
-  // Format current time as it would appear in ET, then parse it
-  // This gives us a Date object that aligns with how datetime_local strings are parsed
-  const etString = now.toLocaleString('en-US', {
-    timeZone: 'UTC',
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -21,13 +48,23 @@ const getCurrentTimeET = () => {
     minute: '2-digit',
     second: '2-digit',
     hour12: false,
-  });
-  // Parse the ET string (browser will interpret in local timezone, matching our data parsing)
-  return new Date(etString.replace(',', ''));
+  }).formatToParts(new Date());
+  const get = (type) => parts.find((p) => p.type === type).value;
+  const h = get('hour') === '24' ? 0 : +get('hour');
+  return new Date(Date.UTC(
+    +get('year'),
+    +get('month') - 1,
+    +get('day'),
+    h,
+    +get('minute'),
+    +get('second'),
+  ));
 };
 
-const formatET = (isoStr) => {
-  const d = new Date(isoStr);
+// Format a predicted_at value (UTC) for display in ET
+const formatET = (val) => {
+  const d = toDate(val);
+  if (!d) return '';
   return d.toLocaleString('en-US', {
     timeZone: 'America/New_York',
     month: 'short',
@@ -35,6 +72,30 @@ const formatET = (isoStr) => {
     hour: 'numeric',
     minute: '2-digit',
   });
+};
+
+// Draw a dashed "Current time" vertical line on a chart group
+const drawNowLine = (g, xScale, innerHeight) => {
+  const now = getCurrentTimeET();
+  const [xMin, xMax] = xScale.domain();
+  if (now >= xMin && now <= xMax) {
+    g.append('line')
+      .attr('x1', xScale(now))
+      .attr('x2', xScale(now))
+      .attr('y1', 3)
+      .attr('y2', innerHeight)
+      .attr('stroke', '#3c3c36')
+      .attr('stroke-width', 1.3)
+      .attr('stroke-dasharray', '5,5')
+      .attr('opacity', 0.9);
+    g.append('text')
+      .attr('x', xScale(now) + 5)
+      .attr('y', 12)
+      .style('font-size', '11px')
+      .style('fill', '#3c3c36')
+      .style('font-weight', 'bold')
+      .text('Current time');
+  }
 };
 
 const HabForecastViz = () => {
@@ -61,13 +122,13 @@ const HabForecastViz = () => {
           file: arrayBuffer,
           onComplete: (result) => {
             result.forEach((row) => {
-              const dtStr = row[25]; // datetime_local
-              const predictedAt = row[26]; // predicted_at
+              const dtStr = row[25]; // datetime_local (ET)
+              const predictedAt = row[26]; // predicted_at (UTC)
               const pred = row[27]; // raw_preds
               const actual = row[28]; // target
               if (dtStr) {
                 rows.push({
-                  date: new Date(dtStr),
+                  date: parseETString(dtStr),
                   predictedAt: predictedAt || null,
                   predicted: pred,
                   actual: actual != null ? actual : null,
@@ -87,7 +148,7 @@ const HabForecastViz = () => {
         setPredictedAtOptions(uniquePredictedAt);
         if (uniquePredictedAt.length > 0) {
           setRangeStart(0);
-          setRangeEnd(Math.min(2, uniquePredictedAt.length - 1));
+          setRangeEnd(Math.min(5, uniquePredictedAt.length - 1));
         }
         setData(rows);
 
@@ -109,7 +170,7 @@ const HabForecastViz = () => {
                   statusRows.push({
                     beach: name,
                     status: st.toLowerCase(),
-                    updatedAt: new Date(updatedAt),
+                    updatedAt: parseETString(updatedAt),
                   });
                 }
               });
@@ -232,7 +293,7 @@ const HabForecastViz = () => {
     const width = container.clientWidth || 700;
     const height = 360;
     const margin = {
-      top: 30, right: 30, bottom: 50, left: 55,
+      top: 30, right: 30, bottom: 50, left: 60,
     };
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
@@ -326,13 +387,13 @@ const HabForecastViz = () => {
       .attr('fill', (d, i) => z(i / Math.max(n - 1, 1)));
 
     // X-axis with date labels
-    const xTime = d3.scaleTime()
+    const xTime = d3.scaleUtc()
       .domain([new Date(allDates[0]), new Date(allDates[m - 1])])
       .range([0, innerWidth]);
 
     g.append('g')
       .attr('transform', `translate(0,${innerHeight})`)
-      .call(d3.axisBottom(xTime).ticks(6).tickFormat(d3.timeFormat('%b %d')))
+      .call(d3.axisBottom(xTime).ticks(6).tickFormat(d3.utcFormat('%b %d')))
       .selectAll('text')
       .style('font-size', '11px');
 
@@ -347,32 +408,13 @@ const HabForecastViz = () => {
     // Y-axis label
     g.append('text')
       .attr('transform', 'rotate(-90)')
-      .attr('y', -48)
+      .attr('y', -46)
       .attr('x', -innerHeight / 2)
       .attr('text-anchor', 'middle')
-      .style('font-size', '12px')
-      .text('HAB risk index');
+      .style('font-size', '16px')
+      .text('Risk index');
 
-    // Current time indicator
-    const now = getCurrentTimeET();
-    const [xTimeMin, xTimeMax] = xTime.domain();
-    if (now >= xTimeMin && now <= xTimeMax) {
-      g.append('line')
-        .attr('x1', xTime(now))
-        .attr('x2', xTime(now))
-        .attr('y1', 3)
-        .attr('y2', innerHeight - 3)
-        .attr('stroke', '#000')
-        .attr('stroke-width', 1)
-        .attr('stroke-dasharray', '5,5')
-        .attr('opacity', 0.9);
-      g.append('text')
-        .attr('x', xTime(now) + 5)
-        .attr('y', 25)
-        .style('font-size', '11px')
-        .style('fill', '#000')
-        .text('Current time');
-    }
+    drawNowLine(g, xTime, innerHeight);
 
     // Tooltip interaction
     const tooltip = d3.select(container).select('.hab-tooltip');
@@ -385,9 +427,9 @@ const HabForecastViz = () => {
       .attr('pointer-events', 'all')
       .on('mousemove', (event) => {
         const [mx] = d3.pointer(event);
-        const i = Math.round(x.invert(mx - margin.left));
+        const i = Math.round(x.invert(mx));
         if (i < 0 || i >= m) return;
-        const dateStr = d3.timeFormat('%b %d, %H:%M')(new Date(allDates[i]));
+        const dateStr = d3.utcFormat('%b %d, %H:%M')(new Date(allDates[i]));
         let total = 0;
         sortedSelected.forEach((ts, idx) => { total += matrix[i][idx]; });
         let riskLabel = 'Low';
@@ -437,7 +479,7 @@ const HabForecastViz = () => {
     const width = container.clientWidth || 700;
     const height = 300;
     const margin = {
-      top: 20, right: 30, bottom: 50, left: 55,
+      top: 20, right: 30, bottom: 50, left: 60,
     };
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
@@ -451,7 +493,7 @@ const HabForecastViz = () => {
     const g = svg.append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleTime()
+    const x = d3.scaleUtc()
       .domain(d3.extent(allPoints, (d) => d.date))
       .range([0, innerWidth]);
 
@@ -477,7 +519,7 @@ const HabForecastViz = () => {
 
     g.append('g')
       .attr('transform', `translate(0,${innerHeight})`)
-      .call(d3.axisBottom(x).ticks(6).tickFormat(d3.timeFormat('%b %d')))
+      .call(d3.axisBottom(x).ticks(6).tickFormat(d3.utcFormat('%b %d')))
       .selectAll('text')
       .style('font-size', '11px');
 
@@ -488,11 +530,11 @@ const HabForecastViz = () => {
 
     g.append('text')
       .attr('transform', 'rotate(-90)')
-      .attr('y', -48)
+      .attr('y', -46)
       .attr('x', -innerHeight / 2)
       .attr('text-anchor', 'middle')
-      .style('font-size', '12px')
-      .text('HAB risk index');
+      .style('font-size', '16px')
+      .text('Risk index');
 
     // Beach status shading
     // Build aggregated worst-status time series from beach data
@@ -568,26 +610,7 @@ const HabForecastViz = () => {
         .attr('d', line);
     }
 
-    // Current time indicator
-    const now = getCurrentTimeET();
-    const [xMin, xMax] = x.domain();
-    if (now >= xMin && now <= xMax) {
-      g.append('line')
-        .attr('x1', x(now))
-        .attr('x2', x(now))
-        .attr('y1', 3)
-        .attr('y2', innerHeight)
-        .attr('stroke', '#000')
-        .attr('stroke-width', 1.2)
-        .attr('stroke-dasharray', '5,5')
-        .attr('opacity', 0.9);
-      g.append('text')
-        .attr('x', x(now) + 5)
-        .attr('y', 25)
-        .style('font-size', '11px')
-        .style('fill', '#000')
-        .text('Current time');
-    }
+    drawNowLine(g, x, innerHeight);
 
     // Legend - horizontal row at top
     const legend = g.append('g')
@@ -828,7 +851,7 @@ const HabForecastViz = () => {
           );
         })()}
       </div>
-      <h4 style={{ margin: '0 0 0px 0' }}>Stream-graph</h4>
+      <h4 style={{ margin: '0 0 0px 0' }}>Bloom Plot</h4>
       <div style={{ position: 'relative' }}>
         <svg ref={svgRef} style={{ width: '100%', height: 'auto' }} />
         <div
@@ -847,7 +870,7 @@ const HabForecastViz = () => {
         />
       </div>
       <div style={{ marginTop: '24px' }}>
-        <h4 style={{ margin: '0 0 4px 0' }}>Actual Forecasts</h4>
+        <h4 style={{ margin: '0 0 6px 0' }}>Actual Forecasts</h4>
         <svg ref={lineSvgRef} style={{ width: '100%', height: 'auto' }} />
       </div>
       <p style={{ fontSize: '12px', color: '#999', marginTop: '8px' }}>
