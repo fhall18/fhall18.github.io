@@ -1,6 +1,22 @@
 // TODO Add a couple lines about each project
 const data = [
   {
+    title: 'Vermont Flexibility Explorer',
+    subtitle: 'How much can flexible EV charging flatten net demand?',
+    slug: 'vermont-ev-flexibility',
+    image: '/images/projects/vt_flex.jpg',
+    date: '2026-10-01',
+    desc:
+      'One week of Vermont load with a 300 MW data center and a fleet of EVs. '
+      + 'Split demand between solar, wind and run-of-river hydro, then choose how much '
+      + 'EV charging can move and how far. Charging is shifted to the deepest valleys '
+      + 'to make the peak net demand as low as possible, so you can see how much '
+      + 'flexibility does for peaks, surplus generation and curtailment.',
+    interactive: 'VermontFlexViz',
+    // The viz shows its own, longer intro, so the detail page skips this description.
+    hideDesc: true,
+  },
+  {
     title: 'HAB Forecast',
     subtitle: 'Harmful algal bloom prediction model',
     slug: 'hab-forecast',

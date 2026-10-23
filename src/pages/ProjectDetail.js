@@ -8,6 +8,7 @@ import data from '../data/projects';
 const interactiveComponents = {
   MilesPerDollarViz: lazy(() => import('../components/Projects/Interactive/MilesPerDollarViz')),
   HabForecastViz: lazy(() => import('../components/Projects/Interactive/HabForecastViz')),
+  VermontFlexViz: lazy(() => import('../components/Projects/Interactive/VermontFlexViz')),
 };
 
 const ProjectDetail = () => {
@@ -35,7 +36,7 @@ const ProjectDetail = () => {
           </div>
         </header>
         <div className="project-detail-content">
-          <p>{project.desc}</p>
+          {!project.hideDesc && <p>{project.desc}</p>}
           {project.link && (
             <p><a href={project.link} target="_blank" rel="noopener noreferrer">View original project &rarr;</a></p>
           )}
