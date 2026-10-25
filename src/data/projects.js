@@ -2,16 +2,17 @@
 const data = [
   {
     title: 'Vermont Flexibility Explorer',
-    subtitle: 'How much can flexible EV charging flatten net demand?',
+    subtitle: 'How much can flexibility flatten net demand?',
     slug: 'vermont-ev-flexibility',
     image: '/images/projects/vt_flex.jpg',
     date: '2026-10-01',
     desc:
-      'One week of Vermont load with a 300 MW data center and a fleet of EVs. '
-      + 'Split demand between solar, wind and run-of-river hydro, then choose how much '
-      + 'EV charging can move and how far. Charging is shifted to the deepest valleys '
-      + 'to make the peak net demand as low as possible, so you can see how much '
-      + 'flexibility does for peaks, surplus generation and curtailment.',
+        'One peak summer week of Vermont demand for electricity with '
+        + 'a 300 MW data center and 250,000 EVs (~50% of vehicles). You can split weekly supply '
+        + 'of energy between solar, wind and run-of-river hydro (the three always total 100%), '
+        + 'then choose how much EV charging can be flexed. Total EV energy is unchanged, and net '
+        + 'demand is never pushed past zero. Within those limits charging is placed to keep net '
+        + 'demand as low as possible while filling the deepest valleys where renewables are abundant.',
     interactive: 'VermontFlexViz',
     // The viz shows its own, longer intro, so the detail page skips this description.
     hideDesc: true,

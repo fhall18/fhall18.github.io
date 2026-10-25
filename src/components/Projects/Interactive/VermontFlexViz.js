@@ -9,8 +9,8 @@ import {
 } from './vtFlex/Summary';
 import {
   COLORS,
-  drawSupplyDemand, drawNetShift, drawLdc, drawCurtailment,
-  supplyDemandLegend, netShiftLegend, curtailmentLegend,
+  drawSupplyDemand, drawNetShift, drawLdc, drawExport,
+  supplyDemandLegend, netShiftLegend, exportLegend,
 } from './vtFlex/charts';
 
 const hourly = toHourly(VT_DATA);
@@ -18,16 +18,15 @@ const NOTEBOOK_PARAMS = notebookParams(hourly);
 
 // Slider definitions. Values are held in percent. EV penetration is fixed at the notebook's
 // value (300 MW times the hourly shape). The three supply sliders always sum to 100%.
-const SUPPLY_HINT = 'share of weekly demand energy; solar, wind and hydro always total 100%';
 const SUPPLY_CONTROLS = [
   {
-    key: 'solarShare', name: 'Solar', hint: SUPPLY_HINT, swatch: COLORS.solar,
+    key: 'solarShare', name: 'Solar', hint: 'Local solar generation', swatch: COLORS.solar,
   },
   {
-    key: 'windShare', name: 'Wind', hint: SUPPLY_HINT, swatch: COLORS.wind,
+    key: 'windShare', name: 'Wind', hint: 'Local wind generation', swatch: COLORS.wind,
   },
   {
-    key: 'hydroShare', name: 'Hydro', hint: `run-of-river; ${SUPPLY_HINT}`, swatch: COLORS.hydro,
+    key: 'hydroShare', name: 'Hydro', hint: 'Run-of-river', swatch: COLORS.hydro,
   },
 ];
 const EV_CONTROLS = [
@@ -134,21 +133,19 @@ const VermontFlexViz = () => {
     supplyDemand: (svg, tip) => drawSupplyDemand(svg, scn, tip),
     netShift: (svg, tip) => drawNetShift(svg, scn, tip, flexShare),
     ldc: (svg, tip) => drawLdc(svg, scn, tip, flexShare),
-    curtailment: (svg, tip) => drawCurtailment(svg, scn, tip, flexShare),
+    exported: (svg, tip) => drawExport(svg, scn, tip, flexShare),
   }), [scn, flexShare]);
 
   return (
     <div className="vt-flex">
       <section className="card">
         <p className="vt-flex-intro">
-          <strong>Summary:</strong> One week of Vermont load with a 300 MW data centre and the
-          notebook&apos;s EV fleet. Split weekly demand energy between solar, wind and
-          run-of-river hydro (the three always total 100%), then choose how much EV charging can
-          move and how far. Each hour&apos;s flexible charging may move up to the shift window
-          either side of itself (clipped at the start and end of the week), total EV energy is
-          unchanged, and net demand is never pushed past zero. Within those limits charging is
-          placed to make the peak net demand as low as possible, filling the deepest valleys
-          first.
+          <strong>Summary:</strong> One peak summer week of Vermont demand for electricity with
+          a 300 MW data center and 250,000 EVs (~50% of vehicles). You can split weekly supply
+          of energy between solar, wind and run-of-river hydro (the three always total 100%),
+          then choose how much EV charging can be flexed. Total EV energy is unchanged, and net
+          demand is never pushed past zero. Within those limits charging is placed to keep net
+          demand as low as possible while filling the deepest valleys where renewables are abundant.
         </p>
       </section>
 
@@ -164,7 +161,7 @@ const VermontFlexViz = () => {
 
       <ChartCard
         title="Supply and demand"
-        subtitle="Demand stacked above zero, supply below. The white region is net demand before any EV shifting."
+        subtitle="Demand stacked above zero, supply below. The white region is net demand before demand flexibility."
         legend={supplyDemandLegend}
         draw={draws.supplyDemand}
         label="Stacked supply and demand with net demand"
@@ -194,11 +191,11 @@ const VermontFlexViz = () => {
           short
         />
         <ChartCard
-          title="Generation curtailment curve"
-          subtitle="Hours with surplus generation (negative net demand), sorted from the largest surplus down, before and after the shift. Each series is sorted independently."
-          legend={curtailmentLegend(flexShare)}
-          draw={draws.curtailment}
-          label="Generation curtailment curve"
+          title="Surplus generation exported"
+          subtitle="Total generation over the week that exceeds demand (negative net demand) and would be exported or curtailed. The first bar is the surplus with no EV flexibility; the second is what remains after flexible EV charging is moved into surplus hours. The sliver on the left of each bar splits the surplus by source, in proportion to each source's output in the surplus hours. Hover a bar for details."
+          legend={exportLegend(flexShare)}
+          draw={draws.exported}
+          label="Surplus generation exported before and after EV flexibility"
           short
         />
       </div>

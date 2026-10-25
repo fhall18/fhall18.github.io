@@ -28,7 +28,8 @@ const fmtAxis = (v) => {
 };
 
 export const afterLabel = (flexShare) => `Net demand with ${Math.round(flexShare)}% EV flexibility`;
-export const curtailedAfterLabel = (flexShare) => `Curtailed with ${Math.round(flexShare)}% EV flexibility`;
+export const exportedBeforeLabel = 'Exported before EV flexibility';
+export const exportedAfterLabel = (flexShare) => `Exported with ${Math.round(flexShare)}% EV flexibility`;
 
 // ---------- chart scaffolding ----------
 function chartFrame(svgNode, { width = 1100, height = 420 }) {
@@ -45,7 +46,7 @@ function chartFrame(svgNode, { width = 1100, height = 420 }) {
 
 function drawAxes({
   g, innerW, innerH,
-}, x, y, { xAxis, xLabel }) {
+}, x, y, { xAxis, xLabel, yLabel = 'MW' }) {
   g.append('g')
     .attr('class', 'grid')
     .call(d3.axisLeft(y).ticks(6).tickSize(-innerW).tickFormat(''));
@@ -60,7 +61,7 @@ function drawAxes({
     .attr('x', -innerH / 2)
     .attr('y', -46)
     .attr('text-anchor', 'middle')
-    .text('MW');
+    .text(yLabel);
   if (xLabel) {
     g.append('text')
       .attr('class', 'axis-label')
@@ -239,7 +240,7 @@ export const netShiftLegend = (flexShare) => [
   { label: afterLabel(flexShare), color: COLORS.after },
 ];
 
-// ---------- charts 3 and 4: duration curves ----------
+// ---------- chart 3: load duration curve ----------
 // Rows are { i, before, after, moved }, sorted descending, drawn as a white area (before) with
 // the green area (after) on top.
 function drawDurationCurve(svgNode, tip, cfg) {
@@ -309,24 +310,173 @@ export function drawLdc(svgNode, scn, tip, flexShare) {
   });
 }
 
-// Generation curtailment curve: hours with surplus (negative net demand), shown as the MW of
-// generation that would be curtailed, each series sorted independently.
-export function drawCurtailment(svgNode, scn, tip, flexShare) {
-  const neg = scn.hours.filter((h) => h.net < 0);
-  drawDurationCurve(svgNode, tip, {
-    rows: toRows(
-      neg.map((h) => -h.net).sort(desc),
-      neg.map((h) => Math.max(-h.netAfter, 0)).sort(desc),
-      neg.map((h) => -h.dispatch).sort(desc),
-    ),
-    xLabel: `Hours with surplus generation, ranked (${neg.length} of ${scn.hours.length})`,
-    beforeLabel: 'Curtailed generation',
-    afterLabel: curtailedAfterLabel(flexShare),
-    movedLabel: 'EV load moved in',
+// ---------- chart 4: surplus generation exported ----------
+// Bar path with rounded top corners, anchored to the baseline.
+const roundedTopBar = (x0, top, w, h, r) => {
+  const rr = Math.min(r, w / 2, h);
+  const right = x0 + w;
+  const base = top + h;
+  return [
+    `M${x0},${base}`,
+    `V${top + rr}`,
+    `Q${x0},${top} ${x0 + rr},${top}`,
+    `H${right - rr}`,
+    `Q${right},${top} ${right},${top + rr}`,
+    `V${base}`,
+    'Z',
+  ].join(' ');
+};
+
+const EXPORT_SOURCES = [
+  { key: 'solar', name: 'Solar', color: COLORS.solar },
+  { key: 'wind', name: 'Wind', color: COLORS.wind },
+  { key: 'hydro', name: 'Hydro', color: COLORS.hydro },
+];
+// Fraction of each bar's width given to the by-source sliver on its left edge.
+const SLIVER_FRACTION = 1 / 8;
+
+// Weekly surplus generation (hours where supply exceeds demand), summed to MWh. One bar for the
+// surplus before any EV shifting, one for what remains once the flexible share of EV charging
+// has been moved into those hours. A sliver on the left of each bar splits the surplus by
+// source, attributing each hour's surplus to solar, wind and hydro in proportion to their output
+// that hour.
+export function drawExport(svgNode, scn, tip, flexShare) {
+  const { hours } = scn;
+  const surplusOf = (acc) => hours.map((h) => Math.max(-acc(h), 0));
+  const bySource = (surplus) => EXPORT_SOURCES.map((s) => ({
+    ...s,
+    total: d3.sum(hours, (h, i) => {
+      const gen = h.solar + h.wind + h.hydro;
+      return gen > 0 ? surplus[i] * (h[s.key] / gen) : 0;
+    }),
+  }));
+  const before = surplusOf((h) => h.net);
+  const after = surplusOf((h) => h.netAfter);
+  const absorbed = d3.sum(before) - d3.sum(after);
+  const bars = [
+    {
+      key: 'before',
+      tick: 'No EV flexibility',
+      label: exportedBeforeLabel,
+      color: COLORS.net,
+      total: d3.sum(before),
+      peak: d3.max(before) || 0,
+      count: before.filter((v) => v > 0).length,
+      sources: bySource(before),
+    },
+    {
+      key: 'after',
+      tick: `${Math.round(flexShare)}% EV flexibility`,
+      label: exportedAfterLabel(flexShare),
+      color: COLORS.after,
+      total: d3.sum(after),
+      peak: d3.max(after) || 0,
+      count: after.filter((v) => v > 0).length,
+      sources: bySource(after),
+    },
+  ];
+
+  const f = chartFrame(svgNode, { width: 600, height: 340 });
+  const x = d3.scaleBand()
+    .domain(bars.map((b) => b.key))
+    .range([0, f.innerW])
+    .paddingInner(0.4)
+    .paddingOuter(0.3);
+  // Headroom above the tallest bar for the direct labels.
+  const yMax = (d3.max(bars, (b) => b.total) || 1) * 1.18;
+  const y = d3.scaleLinear().domain([0, yMax]).nice().range([f.innerH, 0]);
+
+  drawAxes(f, x, y, {
+    xAxis: d3.axisBottom(x).tickSize(0).tickPadding(10)
+      .tickFormat((k) => bars.find((b) => b.key === k).tick),
+    yLabel: 'MWh over the week',
   });
+
+  const barW = Math.min(x.bandwidth(), 140);
+  const barX = (b) => x(b.key) + (x.bandwidth() - barW) / 2;
+  const barPath = (b) => roundedTopBar(barX(b), y(b.total), barW, y(0) - y(b.total), 4);
+  const clipId = (b) => `vt-clip-export-${b.key}`;
+  const groups = f.g.selectAll('g.bar').data(bars).join('g').attr('class', 'bar');
+
+  // Each bar's outline doubles as the clip for its sliver, so the sliver shares the rounded top.
+  f.svg.append('defs').selectAll('clipPath').data(bars).join('clipPath')
+    .attr('id', clipId)
+    .append('path')
+    .attr('d', barPath);
+
+  // Fills live in a sub-group so hover can dim a whole bar, sliver included.
+  const marks = groups.append('g').attr('class', 'fills').attr('opacity', 0.9);
+  marks.append('path')
+    .attr('fill', (b) => b.color)
+    .attr('d', barPath);
+  // By-source sliver, stacked from the baseline in the same order the supply chart stacks
+  // generation away from the axis: solar, then wind, then hydro.
+  marks.append('g')
+    .attr('clip-path', (b) => `url(#${clipId(b)})`)
+    .selectAll('rect')
+    .data((b) => {
+      let cum = 0;
+      return b.sources.map((s) => {
+        const seg = {
+          ...s, bar: b, y0: cum, y1: cum + s.total,
+        };
+        cum += s.total;
+        return seg;
+      });
+    })
+    .join('rect')
+    .attr('fill', (s) => s.color)
+    .attr('x', (s) => barX(s.bar))
+    .attr('width', barW * SLIVER_FRACTION)
+    .attr('y', (s) => y(s.y1))
+    .attr('height', (s) => Math.max(y(s.y0) - y(s.y1), 0));
+
+  // Direct labels in text ink; the delta only on the "after" bar and only when it changed.
+  groups.append('text')
+    .attr('class', 'axis-label')
+    .attr('x', (b) => barX(b) + barW / 2)
+    .attr('y', (b) => y(b.total) - 8)
+    .attr('text-anchor', 'middle')
+    .text((b) => `${fmtMwh(b.total)} MWh`);
+  groups.filter((b) => b.key === 'after' && absorbed > 0).append('text')
+    .attr('class', 'axis-label')
+    .attr('x', (b) => barX(b) + barW / 2)
+    .attr('y', (b) => y(b.total) - 24)
+    .attr('text-anchor', 'middle')
+    .text(() => {
+      const pct = bars[0].total > 0 ? ` (${fmtPctSigned(-absorbed / bars[0].total)})` : '';
+      return `${fmtSigned(-absorbed)} MWh${pct}`;
+    });
+
+  // Hit target the full band width and plot height, so hovering near a short bar still works.
+  groups.append('rect')
+    .attr('class', 'overlay')
+    .attr('x', (b) => x(b.key))
+    .attr('y', 0)
+    .attr('width', x.bandwidth())
+    .attr('height', f.innerH)
+    .on('pointermove', (event, b) => {
+      marks.attr('opacity', (m) => (m.key === b.key ? 1 : 0.55));
+      const rows = [
+        { name: 'Surplus generation', value: `${fmtMwh(b.total)} MWh`, color: b.color },
+        { name: 'Hours with surplus', value: `${b.count} of ${hours.length}`, color: b.color },
+        { name: 'Largest hourly surplus', value: `${fmtMw(b.peak)} MW`, color: b.color },
+      ];
+      if (b.key === 'after') {
+        rows.push({ name: 'Absorbed by EV charging', value: `${fmtMwh(absorbed)} MWh`, color: COLORS.ev });
+      }
+      b.sources.forEach((s) => {
+        rows.push({ name: `${s.name} surplus`, value: `${fmtMwh(s.total)} MWh`, color: s.color });
+      });
+      tip.show(event, b.label, rows);
+    })
+    .on('pointerleave', () => {
+      marks.attr('opacity', 0.9);
+      tip.hide();
+    });
 }
 
-export const curtailmentLegend = (flexShare) => [
-  { label: 'Curtailed generation', color: COLORS.net, opacity: 0.9 },
-  { label: curtailedAfterLabel(flexShare), color: COLORS.after },
+export const exportLegend = (flexShare) => [
+  { label: exportedBeforeLabel, color: COLORS.net, opacity: 0.9 },
+  { label: exportedAfterLabel(flexShare), color: COLORS.after },
 ];

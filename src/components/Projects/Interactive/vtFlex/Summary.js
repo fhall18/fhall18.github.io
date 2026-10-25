@@ -83,8 +83,8 @@ export const Derived = ({ scn }) => {
   const parts = [
     `Weekly demand ${d3.format(',.0f')(t.totalDemandMwh / 1000)} GWh (base load ${fmtPct0(t.loadMwh / t.totalDemandMwh)}, `
       + `data centre ${fmtPct0(t.dcMwh / t.totalDemandMwh)}, EV ${fmtPct0(t.evMwh / t.totalDemandMwh)})`,
-    `EV charging fixed at ${fmtMwh(t.evMwh)} MWh/wk, peak ${fmtMw(t.evPeakMw)} MW (300 MW times the notebook shape)`,
-    `Solar ${fmtMwh(t.solarMwh)}, wind ${fmtMwh(t.windMwh)}, hydro ${fmtMwh(t.hydroMwh)} MWh/wk`,
+    `EV charging fixed at ${fmtMwh(t.evMwh / 1000)} GWh/wk, peak ${fmtMw(t.evPeakMw)} MW`,
+    `Solar ${fmtMwh(t.solarMwh / 1000)} GWh, wind ${fmtMwh(t.windMwh / 1000)} GWh, hydro ${fmtMwh(t.hydroMwh / 1000)} GWh/wk`,
   ];
   return <span className="derived">{parts.join('  ·  ')}</span>;
 };
