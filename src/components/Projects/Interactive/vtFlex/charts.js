@@ -115,7 +115,7 @@ const timeAxis = (x) => d3.axisBottom(x).ticks(d3.utcDay.every(1)).tickFormat(fm
 // ---------- chart 1: supply and demand ----------
 export function drawSupplyDemand(svgNode, scn, tip) {
   const { hours } = scn;
-  const f = chartFrame(svgNode, { height: 440 });
+  const f = chartFrame(svgNode, { height: 330 });
   const x = d3.scaleUtc().domain(d3.extent(hours, (h) => h.date)).range([0, f.innerW]);
   const yMax = d3.max(hours, (h) => Math.max(
     h.dc + h.load + h.ev,
@@ -190,7 +190,7 @@ export const supplyDemandLegend = [
 // ---------- chart 2: net demand with EV shift ----------
 export function drawNetShift(svgNode, scn, tip, flexShare) {
   const { hours } = scn;
-  const f = chartFrame(svgNode, { height: 440 });
+  const f = chartFrame(svgNode, { height: 330 });
   const x = d3.scaleUtc().domain(d3.extent(hours, (h) => h.date)).range([0, f.innerW]);
   const yMax = d3.max(hours, (h) => Math.max(Math.abs(h.net), Math.abs(h.netAfter)));
   const y = d3.scaleLinear().domain([-yMax, yMax]).nice().range([f.innerH, 0]);

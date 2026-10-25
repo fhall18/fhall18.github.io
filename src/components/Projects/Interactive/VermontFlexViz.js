@@ -226,11 +226,6 @@ const VermontFlexViz = () => {
           </div>
         </details>
       </section>
-
-      <p className="vt-flex-footer">
-        Method ported from <code>flexibility_example.ipynb</code>. Data centre load is fixed at 300
-        MW times the notebook&apos;s shape.
-      </p>
     </div>
   );
 };
