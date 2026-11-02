@@ -7,12 +7,26 @@ const data = [
     image: '/images/projects/vt_flex.jpg',
     date: '2026-10-01',
     desc:
-        'One peak summer week of Vermont demand for electricity with '
-        + 'a 300 MW data center and 250,000 EVs (~50% of vehicles). You can split weekly supply '
-        + 'of energy between solar, wind and run-of-river hydro (the three always total 100%), '
-        + 'then choose how much EV charging can be flexed. Total EV energy is unchanged, and net '
-        + 'demand is never pushed past zero. Within those limits charging is placed to keep net '
-        + 'demand as low as possible while filling the deepest valleys where renewables are abundant.',
+      'The power grid is one of the biggest machines people have ever built. '
+      + 'It\'s a web of wires that ties together lots of places that make power: river '
+      + 'water turning wheels, wind turning blades, sunlight landing on flat panels, and '
+      + 'big plants that burn fuel. Every moment, it pulls from the cheapest power it can '
+      + 'get and sends it to your home. Each year, more of that power comes from sun, wind '
+      + 'and water, which cost little to run and don\'t put smoke in the air.'
+      + 'The grid has one hard rule. The power going into the wires has to match the power '
+      + 'coming out, every second of every day. There isn\'t much room to save power for later.'
+      + 'So when everyone turns things on at once, something has to turn up to meet them. '
+      + 'Often that\'s an older plant that burns gas or oil, kept around mostly for a few busy '
+      + 'hours a year. And when the sun is high and the wind is strong, the grid can make more '
+      + 'than people need, so the extra gets sent somewhere else or wasted.'
+      + 'For a long time, we\'ve handled this from the making side: build enough plants to '
+      + 'cover the busiest hour. The using side can help too. Some things don\'t care when '
+      + 'they get power, as long as they get it. A car plugged in at home just needs to be full when you leave.'
+      + 'This tool lets you play with that idea. It shows one hot summer week in Vermont '
+      + 'with a large computer building (a 300 MW data center) and 250,000 electric cars, '
+      + 'about half the cars in the state. You choose how much power comes from sun, wind '
+      + 'and river water. Then you choose how many car owners are okay with their car charging '
+      + 'at a different time, and how many hours earlier or later it can move.',
     interactive: 'VermontFlexViz',
     // The viz shows its own, longer intro, so the detail page skips this description.
     hideDesc: true,
