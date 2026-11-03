@@ -315,7 +315,7 @@ export function drawLdc(svgNode, scn, tip, flexShare) {
       pos.map((h) => h.netAfter).sort(desc),
       pos.map((h) => h.dispatch).sort(desc),
     ),
-    xLabel: `Hours with positive net demand, ranked (${pos.length} of ${scn.hours.length})`,
+    xLabel: `Hours with positive net demand, ordered (${pos.length} of ${scn.hours.length} total hours)`,
     beforeLabel: 'Net demand',
     afterLabel: afterLabel(flexShare),
     movedLabel: 'EV load moved out',

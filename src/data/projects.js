@@ -16,7 +16,7 @@ const data = [
       + 'The grid has one hard rule. The power going into the wires has to match the power '
       + 'coming out, every second of every day. So when we turn up our air conditioners, flip '
       + 'on lights and plug in our electric cars, a power plant has to turn up to meet them. '
-      + 'But what if we could shift when we use power? '
+      + 'But what if we could introduce flexibility into when we use power? '
       + 'How would this flexibility change the grid as we know it?',
     interactive: 'VermontFlexViz',
     // The viz shows its own, longer intro, so the detail page skips this description.
