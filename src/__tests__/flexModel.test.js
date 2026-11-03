@@ -45,4 +45,28 @@ describe('flexModel', () => {
     const peakAfter = Math.max(...net.map((n, i) => n - (ev[i] - shifted[i])));
     expect(peakAfter).toBeLessThan(10);
   });
+
+  it('subtracts gas from net demand, up to its capacity, without changing the EV shift', () => {
+    const noGas = buildScenario(hourly, base);
+    const gasMw = 200;
+    const scn = buildScenario(hourly, { ...base, gasMw });
+    const gasFor = (x) => Math.min(gasMw, Math.max(x, 0));
+    scn.hours.forEach((h, i) => {
+      const ref = noGas.hours[i];
+      expect(h.dispatch).toBeCloseTo(ref.dispatch, 9);
+      expect(h.gasBefore).toBeCloseTo(gasFor(ref.net), 9);
+      expect(h.gasAfter).toBeCloseTo(gasFor(ref.netAfter), 9);
+      expect(h.net).toBeCloseTo(ref.net - h.gasBefore, 9);
+      expect(h.netAfter).toBeCloseTo(ref.netAfter - h.gasAfter, 9);
+      // Surplus hours are untouched by gas.
+      if (ref.net < 0) expect(h.net).toBeCloseTo(ref.net, 9);
+    });
+    expect(noGas.totals.gasMwhAfter).toBe(0);
+    expect(scn.totals.peakNetAfter).toBeCloseTo(Math.max(noGas.totals.peakNetAfter - gasMw, 0), 6);
+    // A plant as large as the renewable-only peak covers every gap.
+    const big = buildScenario(hourly, { ...base, gasMw: noGas.totals.peakNetBefore });
+    expect(big.totals.positiveNetMwhBefore).toBeCloseTo(0, 6);
+    expect(big.totals.positiveNetMwhAfter).toBeCloseTo(0, 6);
+    expect(big.totals.hoursPositiveAfter).toBe(0);
+  });
 });

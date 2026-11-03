@@ -6,12 +6,12 @@ const numbers = (keys) => Object.fromEntries(keys.map((k) => [k, num]));
 // Shape of the object returned by buildScenario in flexModel.js.
 const scenarioShape = PropTypes.shape({
   params: PropTypes.shape(numbers([
-    'evShare', 'solarShare', 'windShare', 'hydroShare', 'flexShare', 'shiftWindow',
+    'evShare', 'solarShare', 'windShare', 'hydroShare', 'flexShare', 'shiftWindow', 'gasMw',
   ])).isRequired,
   hours: PropTypes.arrayOf(PropTypes.shape({
     ...numbers([
       't', 'dayKey', 'hour', 'load', 'dc', 'ev', 'solar', 'wind', 'hydro', 'net',
-      'evShifted', 'dispatch', 'netAfter',
+      'evShifted', 'dispatch', 'netAfter', 'gasBefore', 'gasAfter',
     ]),
     date: PropTypes.instanceOf(Date).isRequired,
     isWeekend: PropTypes.bool.isRequired,
@@ -28,7 +28,8 @@ const scenarioShape = PropTypes.shape({
     'loadMwh', 'dcMwh', 'evMwh', 'totalDemandMwh', 'solarMwh', 'windMwh', 'hydroMwh', 'evMw',
     'evPeakMw', 'evPeakMwShifted', 'mwhMoved', 'peakNetBefore', 'peakNetAfter', 'minNetBefore',
     'minNetAfter', 'totalAbsNetBefore', 'totalAbsNetAfter', 'hoursPositiveBefore',
-    'hoursPositiveAfter',
+    'hoursPositiveAfter', 'gasMw', 'gasMwhBefore', 'gasMwhAfter', 'positiveNetMwhBefore',
+    'positiveNetMwhAfter',
   ])).isRequired,
 });
 

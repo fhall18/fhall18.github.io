@@ -2,12 +2,17 @@
 //
 // Pipeline (same as the notebook):
 //   1. 5-minute rows -> centered rolling means (load window 6, wind window 12), hourly averages.
-//   2. Hourly shapes for EV charging, data centre load and run-of-river hydro.
+//   2. Hourly shapes for EV charging, data center load and run-of-river hydro.
 //   3. Supply (solar, wind, hydro) scaled so each covers a chosen share of weekly demand energy.
-//   4. Net demand = load - solar - wind - hydro + EV + data centre.
+//   4. Net demand = load - solar - wind - hydro + EV + data center.
 //   5. A share of EV charging is moved, each hour within +/- window hours of itself, so the peak
-//      net demand is minimised, holding total EV energy fixed and keeping the shifted net demand
+//      net demand is minimized, holding total EV energy fixed and keeping the shifted net demand
 //      between zero and the original net demand in every hour.
+//   6. A gas plant (not in the notebook) runs as hard as needed to cover whatever positive net
+//      demand the renewables leave, up to its capacity, and is subtracted from net demand. The
+//      EV shift is solved on the renewable-only net demand (step 5), then gas is dispatched
+//      against the result, so `net` and `netAfter` both include gas. Positive net demand that
+//      remains is demand above the plant's capacity.
 
 const WEEKDAY_CURVE = [
   0.75, 0.65, 0.58, 0.55, 0.6, 0.8, 1.05, 1.1, 0.95, 0.8, 0.72, 0.7,
@@ -40,6 +45,7 @@ export const NOTEBOOK = {
   hydroShare: 0.2,
   flexShare: 0.8, // EV_FLEX_SHARE
   shiftWindow: 12, // hours either side flexible charging may move (page default, not in notebook)
+  gasMw: 0, // gas plant capacity (page addition, not in notebook)
 };
 
 const MS_PER_DAY = 86400000;
@@ -234,16 +240,19 @@ export function notebookParams(hourly) {
     hydroShare: NOTEBOOK.hydroShare,
     flexShare: NOTEBOOK.flexShare,
     shiftWindow: NOTEBOOK.shiftWindow,
+    gasMw: NOTEBOOK.gasMw,
   };
 }
 
 // params: shares are fractions (0..1).
-//   evShare    EV charging energy as a share of total demand energy (load + data centre + EV)
+//   evShare    EV charging energy as a share of total demand energy (load + data center + EV)
 //   solarShare, windShare, hydroShare   supply energy as a share of total demand energy
 //   flexShare  share of EV charging that can move to another hour
 //   shiftWindow  hours either side of its own hour that flexible charging may move (default 12)
+//   gasMw      gas plant capacity in MW (default 0)
 export function buildScenario(hourly, params) {
   const evShare = Math.min(Math.max(params.evShare, 0), 0.95);
+  const gasMw = Math.max(params.gasMw || 0, 0);
 
   const evShapes = hourly.map(evShape);
   const dcProfile = hourly.map((h) => dcShape(h) * NOTEBOOK.dcMw);
@@ -298,7 +307,14 @@ export function buildScenario(hourly, params) {
     h.evShifted = shifted[i];
     // positive = charging moved out of this hour (net reduced), negative = moved in
     h.dispatch = h.ev - shifted[i];
-    h.netAfter = h.net - h.dispatch;
+    const netAfterRenewables = h.net - h.dispatch;
+    // Gas fills positive net demand up to its capacity, before and after the shift, and is part
+    // of net demand from here on. Subtracting min(cap, max(x, 0)) from x is monotone, so the
+    // shifted net demand stays between zero and the unshifted net demand, as it did before gas.
+    h.gasBefore = Math.min(gasMw, Math.max(h.net, 0));
+    h.gasAfter = Math.min(gasMw, Math.max(netAfterRenewables, 0));
+    h.net -= h.gasBefore;
+    h.netAfter = netAfterRenewables - h.gasAfter;
     /* eslint-enable no-param-reassign */
   });
 
@@ -341,9 +357,15 @@ export function buildScenario(hourly, params) {
     totalAbsNetAfter: sum(hours.map((h) => Math.abs(h.netAfter))),
     hoursPositiveBefore: hours.filter((h) => h.net > 0).length,
     hoursPositiveAfter: hours.filter((h) => h.netAfter > 0).length,
+    gasMw,
+    gasMwhBefore: sum(hours.map((h) => h.gasBefore)),
+    gasMwhAfter: sum(hours.map((h) => h.gasAfter)),
+    // Positive net demand is what no supply covers: with a gas plant, demand above its capacity.
+    positiveNetMwhBefore: sum(hours.map((h) => Math.max(h.net, 0))),
+    positiveNetMwhAfter: sum(hours.map((h) => Math.max(h.netAfter, 0))),
   };
 
   return {
-    params: { ...params, evShare }, hours, days, totals,
+    params: { ...params, evShare, gasMw }, hours, days, totals,
   };
 }

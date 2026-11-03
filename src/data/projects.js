@@ -1,22 +1,23 @@
 // TODO Add a couple lines about each project
 const data = [
   {
-    title: 'Vermont Flexibility Explorer',
+    title: 'Vermont Grid Flexibility',
     subtitle: 'How much can flexibility flatten net demand?',
-    slug: 'vermont-ev-flexibility',
+    slug: 'vermont-grid-flexibility',
     image: '/images/projects/vt_flex.jpg',
     date: '2026-10-01',
     desc:
       'The power grid is one of the biggest machines people have ever built. '
       + 'It\'s a web of wires that ties together lots of places that make power: river '
-      + 'water turning wheels, wind turning blades, sunlight landing on flat panels, and '
+      + 'water turning turbines, wind spinning blades, sunlight landing on flat panels, and '
       + 'big plants that burn fuel. Every moment, it pulls from the cheapest power it can '
       + 'get and sends it to your home. Each year, more of that power comes from sun, wind '
-      + 'and water, which cost little to run and don\'t put smoke in the air.'
+      + 'and water, which cost little to run and avoid pollution. '
       + 'The grid has one hard rule. The power going into the wires has to match the power '
-      + 'coming out, every second of every day. '
-      + 'So when everyone turns things on at once, something has to turn up to meet them. '
-      + 'But what if we had flexibility in when we use power? How would that change the grid as we know it?',
+      + 'coming out, every second of every day. So when we turn up our air conditioners, flip '
+      + 'on lights and plug in our electric cars, a power plant has to turn up to meet them. '
+      + 'But what if we could shift when we use power? '
+      + 'How would this flexibility change the grid as we know it?',
     interactive: 'VermontFlexViz',
     // The viz shows its own, longer intro, so the detail page skips this description.
     hideDesc: true,

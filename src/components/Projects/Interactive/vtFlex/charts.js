@@ -5,6 +5,7 @@ export const COLORS = {
   solar: '#ffc136',
   wind: '#ff9166',
   hydro: '#0963be',
+  gas: '#b8c2cc',
   dc: '#b34cc8',
   load: '#7fa6c8',
   ev: '#a0cc41',
@@ -119,7 +120,7 @@ export function drawSupplyDemand(svgNode, scn, tip) {
   const x = d3.scaleUtc().domain(d3.extent(hours, (h) => h.date)).range([0, f.innerW]);
   const yMax = d3.max(hours, (h) => Math.max(
     h.dc + h.load + h.ev,
-    h.solar + h.wind + h.hydro,
+    h.solar + h.wind + h.hydro + h.gasBefore,
     Math.abs(h.net),
   ));
   const y = d3.scaleLinear().domain([-yMax, yMax]).nice().range([f.innerH, 0]);
@@ -131,17 +132,22 @@ export function drawSupplyDemand(svgNode, scn, tip) {
     .curve(d3.curveLinear);
 
   const layers = [
-    // demand, stacked above zero: data centre, base load, EV
+    // demand, stacked above zero: data center, base load, EV
     { color: COLORS.dc, y0: () => 0, y1: (h) => h.dc },
     { color: COLORS.load, y0: (h) => h.dc, y1: (h) => h.dc + h.load },
     { color: COLORS.ev, y0: (h) => h.dc + h.load, y1: (h) => h.dc + h.load + h.ev },
-    // supply, stacked below zero: solar, wind, hydro
+    // supply, stacked below zero: solar, wind, hydro, then gas filling the remaining gap
     { color: COLORS.solar, y0: () => 0, y1: (h) => -h.solar },
     { color: COLORS.wind, y0: (h) => -h.solar, y1: (h) => -(h.solar + h.wind) },
     {
       color: COLORS.hydro,
       y0: (h) => -(h.solar + h.wind),
       y1: (h) => -(h.solar + h.wind + h.hydro),
+    },
+    {
+      color: COLORS.gas,
+      y0: (h) => -(h.solar + h.wind + h.hydro),
+      y1: (h) => -(h.solar + h.wind + h.hydro + h.gasBefore),
     },
   ];
   layers.forEach((l) => {
@@ -167,23 +173,25 @@ export function drawSupplyDemand(svgNode, scn, tip) {
       rows: [
         { name: 'Net demand', value: `${fmtMw(h.net)} MW`, color: COLORS.net },
         { name: 'Base load', value: `${fmtMw(h.load)} MW`, color: COLORS.load },
-        { name: 'Data centre', value: `${fmtMw(h.dc)} MW`, color: COLORS.dc },
+        { name: 'Data center', value: `${fmtMw(h.dc)} MW`, color: COLORS.dc },
         { name: 'EV charging', value: `${fmtMw(h.ev)} MW`, color: COLORS.ev },
         { name: 'Solar', value: `${fmtMw(h.solar)} MW`, color: COLORS.solar },
         { name: 'Wind', value: `${fmtMw(h.wind)} MW`, color: COLORS.wind },
         { name: 'Hydro', value: `${fmtMw(h.hydro)} MW`, color: COLORS.hydro },
+        { name: 'Gas', value: `${fmtMw(h.gasBefore)} MW`, color: COLORS.gas },
       ],
     };
   });
 }
 
-export const supplyDemandLegend = [
-  { label: 'Data centre', color: COLORS.dc, opacity: 0.5 },
+export const supplyDemandLegend = (gasMw) => [
+  { label: 'Data center', color: COLORS.dc, opacity: 0.5 },
   { label: 'Base load', color: COLORS.load, opacity: 0.5 },
   { label: 'EV charging', color: COLORS.ev, opacity: 0.5 },
   { label: 'Solar', color: COLORS.solar, opacity: 0.5 },
   { label: 'Wind', color: COLORS.wind, opacity: 0.5 },
   { label: 'Hydro', color: COLORS.hydro, opacity: 0.5 },
+  ...(gasMw > 0 ? [{ label: 'Gas', color: COLORS.gas, opacity: 0.5 }] : []),
   { label: 'Net demand', color: COLORS.net, opacity: 0.9 },
 ];
 
@@ -230,6 +238,10 @@ export function drawNetShift(svgNode, scn, tip, flexShare) {
         { name: 'EV load moved out (+) / in (-)', value: `${fmtSigned(h.dispatch)} MW`, color: COLORS.ev },
         { name: 'EV charging before', value: `${fmtMw(h.ev)} MW`, color: COLORS.ev },
         { name: 'EV charging after', value: `${fmtMw(h.evShifted)} MW`, color: COLORS.ev },
+        ...(scn.totals.gasMw > 0 ? [
+          { name: 'Gas before shift', value: `${fmtMw(h.gasBefore)} MW`, color: COLORS.gas },
+          { name: 'Gas after shift', value: `${fmtMw(h.gasAfter)} MW`, color: COLORS.gas },
+        ] : []),
       ],
     };
   });

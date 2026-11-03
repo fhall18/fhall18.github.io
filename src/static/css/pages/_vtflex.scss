@@ -1,7 +1,7 @@
-// Vermont flexibility explorer (components/Projects/Interactive/VermontFlexViz.js).
+// Vermont grid flexibility (components/Projects/Interactive/VermontFlexViz.js).
 // The page stays white (site palette, libs/_vars.scss); only the panels are dark blue, because
 // the charts are drawn for a dark background. The dark theme is defined on the panels so the
-// intro and footer text between them keeps the site's colours.
+// intro and footer text between them keeps the site's colors.
 .vt-flex {
   --surface-hover: #e9e9e9;
   --ink: #3c3b3b;
@@ -27,12 +27,26 @@
 
   p { margin: 0; }
 
-  // The site gives <strong>/<b> their own dark colour; keep bold text the colour of its panel.
+  // "Step 1:" stays bold; the words after it are regular weight.
+  .step-title { font-weight: 400; }
+
+  // The site gives <strong>/<b> their own dark color; keep bold text the color of its panel.
   strong, b { color: inherit; }
 
+  // Intro card: real paragraphs, with the grid's one rule pulled out as a callout.
   .vt-flex-intro {
-    color: var(--ink-secondary);
-    max-width: 900px;
+    p {
+      color: var(--ink-secondary);
+      max-width: 900px;
+    }
+    p + p { margin-top: 12px; }
+    .intro-rule {
+      color: var(--ink);
+      padding: 8px 14px;
+      border-left: 3px solid var(--accent);
+      background: var(--surface-raised);
+      border-radius: 0 6px 6px 0;
+    }
   }
 
   // Dark blue panels. Everything inside them inherits these.
@@ -68,7 +82,7 @@
   }
   .control-row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
     gap: 14px 22px;
   }
   .control {
@@ -129,7 +143,7 @@
     font-variant-numeric: tabular-nums;
   }
 
-  // The site's global `button` rule forces colour with !important and uses a small uppercase
+  // The site's global `button` rule forces color with !important and uses a small uppercase
   // heading font, so this has to override those explicitly.
   .btn {
     background: var(--surface-raised);
@@ -206,7 +220,7 @@
   }
   .card-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 16px;
     margin-bottom: 16px;
 
@@ -332,7 +346,12 @@
   }
 
   // Tables
-  .table-wrap { overflow-x: auto; }
+  // The tables don't wrap, so their natural width would otherwise widen #main (a flex item)
+  // and push the sidebar off screen. inline-size containment keeps them scrolling inside the card.
+  .table-wrap {
+    overflow-x: auto;
+    contain: inline-size;
+  }
   .data-table {
     border-collapse: collapse;
     width: 100%;
@@ -368,6 +387,21 @@
     font-weight: 600;
   }
   .table-actions { margin: 10px 0; }
+
+  // Method card at the bottom: a short numbered walk-through of the shifting algorithm.
+  .vt-flex-method {
+    p, li {
+      color: var(--ink-secondary);
+      max-width: 900px;
+    }
+    p + ol, ol + p { margin-top: 12px; }
+    ol {
+      margin: 0;
+      padding-left: 22px;
+    }
+    li + li { margin-top: 8px; }
+    li strong { color: var(--ink); }
+  }
 
   .vt-flex-footer {
     color: var(--ink-muted);

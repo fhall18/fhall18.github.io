@@ -24,13 +24,13 @@ export const Tiles = ({ scn }) => {
   const posDelta = t.hoursPositiveAfter - t.hoursPositiveBefore;
   const tiles = [
     {
-      label: 'Weekly peak net demand',
+      label: 'Peak net demand',
       value: fmtMw(t.peakNetAfter),
       unit: 'MW',
       delta: delta(t.peakNetBefore, t.peakNetAfter, true),
     },
     {
-      label: 'Weekly peak surplus (negative net)',
+      label: 'Peak renewable surplus',
       value: fmtMw(-Math.min(t.minNetAfter, 0)),
       unit: 'MW',
       delta: delta(-Math.min(t.minNetBefore, 0), -Math.min(t.minNetAfter, 0), true),
@@ -45,21 +45,20 @@ export const Tiles = ({ scn }) => {
       },
     },
     {
-      label: 'Peak EV charging load after shift',
-      value: fmtMw(t.evPeakMwShifted),
-      unit: 'MW',
-      delta: {
-        text: `${fmtSigned(t.evPeakMwShifted - t.evPeakMw)} vs. ${fmtMw(t.evPeakMw)} MW unshifted`,
-        cls: '',
-      },
-    },
-    {
       label: 'Hours with positive net demand',
       value: String(t.hoursPositiveAfter),
       unit: `of ${scn.hours.length}`,
       delta: { text: `${posDelta >= 0 ? '+' : ''}${posDelta} vs. before shift`, cls: '' },
     },
   ];
+  if (t.gasMw > 0) {
+    tiles.push({
+      label: `Gas generation (${fmtMw(t.gasMw)} MW plant)`,
+      value: fmtMwh(t.gasMwhAfter),
+      unit: 'MWh/wk',
+      delta: delta(t.gasMwhBefore, t.gasMwhAfter, true),
+    });
+  }
   return (
     <section className="tiles" aria-label="Weekly summary">
       {tiles.map((tile) => (
@@ -82,10 +81,13 @@ export const Derived = ({ scn }) => {
   const t = scn.totals;
   const parts = [
     `Weekly demand ${d3.format(',.0f')(t.totalDemandMwh / 1000)} GWh (base load ${fmtPct0(t.loadMwh / t.totalDemandMwh)}, `
-      + `data centre ${fmtPct0(t.dcMwh / t.totalDemandMwh)}, EV ${fmtPct0(t.evMwh / t.totalDemandMwh)})`,
+      + `data center ${fmtPct0(t.dcMwh / t.totalDemandMwh)}, EV ${fmtPct0(t.evMwh / t.totalDemandMwh)})`,
     `EV charging fixed at ${fmtMwh(t.evMwh / 1000)} GWh/wk, peak ${fmtMw(t.evPeakMw)} MW`,
     `Solar ${fmtMwh(t.solarMwh / 1000)} GWh, wind ${fmtMwh(t.windMwh / 1000)} GWh, hydro ${fmtMwh(t.hydroMwh / 1000)} GWh/wk`,
   ];
+  if (t.gasMw > 0) {
+    parts.push(`Gas ${fmtMw(t.gasMw)} MW, ${d3.format(',.1f')(t.gasMwhBefore / 1000)} GWh/wk before EV shift`);
+  }
   return <span className="derived">{parts.join('  ·  ')}</span>;
 };
 
@@ -163,14 +165,16 @@ const HOURLY_COLUMNS = [
     csv: (h) => h.date.toISOString().slice(0, 16).replace('T', ' '),
   },
   { label: 'Base load', key: 'load' },
-  { label: 'Data centre', key: 'dc' },
+  { label: 'Data center', key: 'dc' },
   { label: 'EV charging', key: 'ev' },
   { label: 'Solar', key: 'solar' },
   { label: 'Wind', key: 'wind' },
   { label: 'Hydro', key: 'hydro' },
+  { label: 'Gas', key: 'gasBefore' },
   { label: 'Net demand', key: 'net' },
   { label: 'EV shifted', key: 'evShifted' },
   { label: 'EV shift (+out / -in)', key: 'dispatch' },
+  { label: 'Gas after shift', key: 'gasAfter' },
   { label: 'Net after shift', key: 'netAfter' },
 ].map((c) => ({
   ...c,
@@ -189,7 +193,7 @@ export function downloadCsv(scn) {
   const lines = scn.hours.map((h) => HOURLY_COLUMNS.map((c) => c.csv(h)).join(','));
   const p = scn.params;
   const meta = `# ev_share=${p.evShare.toFixed(4)} solar_share=${p.solarShare} wind_share=${p.windShare}`
-    + ` hydro_share=${p.hydroShare} flex_share=${p.flexShare} shift_window=${p.shiftWindow}`;
+    + ` hydro_share=${p.hydroShare} flex_share=${p.flexShare} shift_window=${p.shiftWindow} gas_mw=${p.gasMw}`;
   const blob = new Blob([`${meta}\n${header}\n${lines.join('\n')}\n`], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
