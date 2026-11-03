@@ -178,8 +178,8 @@ const VermontFlexViz = () => {
         <p>
           So when we turn up our air conditioners, flip on the lights, add data centers and
           plug in our electric cars, a power plant has to turn up to meet them. But what if
-          we could shift when we use power? How would this flexibility change the grid as
-          we know it?
+          we could introduce flexibility into when we use power? How would this flexibility
+          change the grid as we know it?
         </p>
         <p>
           This explorable shows a hot summer week in Vermont and the demand for electricity from
@@ -239,7 +239,7 @@ const VermontFlexViz = () => {
         title="Net demand and shiftable EV charging"
         subtitle="White is net demand (after renewables and gas) before any shifting. Green is net
         demand after the flexible share of EV charging is moved, each hour within its shift window,
-        to minimize the peak; gas re-dispatches against the shifted demand.
+        to minimise the peak; gas re-dispatches against the shifted demand.
         The green always stays inside the white region, so it flattens toward the axis as flexibility
         rises but never crosses it. Hover for the EV load moved out of or into each hour."
         legend={netShiftLegend(flexShare)}
@@ -250,8 +250,10 @@ const VermontFlexViz = () => {
       <div className="card-row">
         <ChartCard
           title="Load duration curve"
-          subtitle="Hours with positive net demand, sorted from highest to lowest, before and after the shift.
-          Each series is sorted independently."
+          subtitle="This is a helpful tool for utility planners todetermine how much total generating
+          capacity to build. Hours with positive net demand (demand > supply) are sorted from highest
+          to lowest, before and after the introducing flexibility. The goal is to lower the peak in
+          order to reduce the total number of power plants while using the ones we have more efficiently."
           legend={netShiftLegend(flexShare)}
           draw={draws.ldc}
           label="Load duration curve"
