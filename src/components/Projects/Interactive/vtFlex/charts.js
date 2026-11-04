@@ -5,7 +5,7 @@ export const COLORS = {
   solar: '#ffc136',
   wind: '#ff9166',
   hydro: '#0963be',
-  gas: '#b8c2cc',
+  gas: '#ff00b7',
   dc: '#b34cc8',
   load: '#7fa6c8',
   ev: '#a0cc41',
@@ -154,13 +154,13 @@ export function drawSupplyDemand(svgNode, scn, tip) {
     f.g.append('path')
       .datum(hours)
       .attr('fill', l.color)
-      .attr('fill-opacity', 0.5)
+      .attr('fill-opacity', 0.6)
       .attr('d', area(l.y0, l.y1));
   });
   f.g.append('path')
     .datum(hours)
     .attr('fill', COLORS.net)
-    .attr('fill-opacity', 0.5)
+    .attr('fill-opacity', 0.6)
     .attr('d', area(() => 0, (h) => h.net));
   drawZeroLine(f, y);
   drawAxes(f, x, y, { xAxis: timeAxis(x) });
@@ -185,13 +185,13 @@ export function drawSupplyDemand(svgNode, scn, tip) {
 }
 
 export const supplyDemandLegend = (gasMw) => [
-  { label: 'Data center', color: COLORS.dc, opacity: 0.5 },
-  { label: 'Base load', color: COLORS.load, opacity: 0.5 },
-  { label: 'EV charging', color: COLORS.ev, opacity: 0.5 },
-  { label: 'Solar', color: COLORS.solar, opacity: 0.5 },
-  { label: 'Wind', color: COLORS.wind, opacity: 0.5 },
-  { label: 'Hydro', color: COLORS.hydro, opacity: 0.5 },
-  ...(gasMw > 0 ? [{ label: 'Gas', color: COLORS.gas, opacity: 0.5 }] : []),
+  { label: 'Data center', color: COLORS.dc, opacity: 0.6 },
+  { label: 'Base load', color: COLORS.load, opacity: 0.6 },
+  { label: 'EV charging', color: COLORS.ev, opacity: 0.6 },
+  { label: 'Solar', color: COLORS.solar, opacity: 0.6 },
+  { label: 'Wind', color: COLORS.wind, opacity: 0.6 },
+  { label: 'Hydro', color: COLORS.hydro, opacity: 0.6 },
+  ...(gasMw > 0 ? [{ label: 'Gas', color: COLORS.gas, opacity: 0.6 }] : []),
   { label: 'Net demand', color: COLORS.net, opacity: 0.9 },
 ];
 

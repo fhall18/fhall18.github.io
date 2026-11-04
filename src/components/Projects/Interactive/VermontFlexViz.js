@@ -51,7 +51,7 @@ const EV_CONTROLS = [
   {
     key: 'flexShare',
     name: 'Flexible EVs',
-    hint: 'share of EV charging that can move to another hour',
+    hint: 'Share of EV charging that can move to another hour',
     max: 100,
     step: 1,
     swatch: COLORS.ev,
@@ -59,7 +59,7 @@ const EV_CONTROLS = [
   {
     key: 'shiftWindow',
     name: 'Shift window',
-    hint: "hours either side that an hour's charging may move",
+    hint: 'Window of time EV charging can shift',
     max: 24,
     step: 1,
     fmt: (v) => `±${Math.round(v)} h`,
@@ -165,9 +165,9 @@ const VermontFlexViz = () => {
         </div>
         <p>
           The power grid is one of the biggest machines people have ever built. It&apos;s a web
-          of wires that ties together lots of places that make power: river water turning
-          turbines, wind spinning blades, sunlight landing on flat panels, and big plants that
-          burn fuel. Every moment, it pulls from the cheapest power it can get and sends it to
+          of wires that ties together lots of places that make power: rivers turning
+          turbines, wind spinning blades, sunlight landing on flat panels, and big plants
+          burning fuel. Every moment, it pulls from the cheapest power it can get and sends it to
           your home. Each year, more of that power comes from sun, wind and water, which cost
           little to run and avoid pollution.
         </p>
@@ -181,12 +181,22 @@ const VermontFlexViz = () => {
           we could introduce flexibility into when we use power? How would this flexibility
           change the grid as we know it?
         </p>
+        <h4>The nitty-gritty</h4>
         <p>
-          This explorable shows a hot summer week in Vermont and the demand for electricity from
-          Vermonters, plus a 300 MW data center and 250,000 EVs (about half of all vehicles). You
-          choose the fuel mix to see how it affects net demand, then choose how much EV charging
-          can be flexed. Within those limits charging is placed to keep net demand as low as
-          possible while filling the deepest valleys where renewable energy is abundant.
+          This explorable shows the supply and demand of electricity during a hot summer week
+          in Vermont. The demand includes normal electric use (base load), a 300 MW data center and
+          250,000 EVs (about half of all Vermont vehicles). You get to select your power supply,
+          which has an impact on net demand (white region). In the section below, we explore
+          flexibility with EV charging and how it can lower net demand while filling the
+          deepest valleys where renewable energy is abundant.
+        </p>
+        <h4>What the heck is net demand?!</h4>
+        <p>
+          Net demand is the imbalance between supply and demand. When supply exceeds demand it
+          drops below zero, indicating too much generation. When demand exceeds supply it rises
+          above zero, indicating a capacity shortage. Net demand is calculated as total demand
+          minus the total supply (solar, wind, hydro and gas). The white region plots this net
+          demand, showing the gaps that need to be filled by new generation or flexible resources.
         </p>
       </section>
 
@@ -194,7 +204,7 @@ const VermontFlexViz = () => {
         <div className="card-head">
           <h4>
             Step 1:
-            <span className="step-title"> Choose your fuel mix</span>
+            <span className="step-title"> Choose your power supply</span>
           </h4>
           <p className="card-sub">
             Split the week&apos;s supply between solar, wind and run-of-river hydro. The three
@@ -209,16 +219,16 @@ const VermontFlexViz = () => {
           </button>
           <Derived scn={scn} />
         </div>
-      </section>
 
-      <ChartCard
-        title="Supply and demand"
-        subtitle="Demand stacked above zero, supply below, with gas filling what the renewables leave,
-        up to its capacity. The white region is net demand after all supply, before demand flexibility."
-        legend={supplyDemandLegend(gasMw)}
-        draw={draws.supplyDemand}
-        label="Stacked supply and demand with net demand"
-      />
+        <ChartCard
+          embedded
+          title="Supply and demand"
+          subtitle="Demand above zero, supply below, and net demand showing the imbalance."
+          legend={supplyDemandLegend(gasMw)}
+          draw={draws.supplyDemand}
+          label="Stacked supply and demand with net demand"
+        />
+      </section>
 
       <section className="controls ev-controls" aria-label="EV flexibility controls">
         <div className="card-head">
@@ -227,45 +237,45 @@ const VermontFlexViz = () => {
             <span className="step-title"> Adjust the amount of flexibility</span>
           </h4>
           <p className="card-sub">
-            Choose how much EV charging can move, and how far in time it can go.
+            Choose how much EV charging is flexible, and how far it can be shifted.
           </p>
         </div>
         <Controls controls={EV_CONTROLS} state={state} onChange={onChange} />
+
+        <ChartCard
+          embedded
+          title="Net demand and shiftable EV charging"
+          subtitle="White is net demand (after renewables and gas) before any shifting. Green is net
+          demand after the flexible share of EV charging is moved, each hour within its shift window,
+          to minimize the peak; gas re-dispatches against the shifted demand.
+          The green always stays inside the white region, so it flattens toward the axis as flexibility
+          rises but never crosses it. Hover for the EV load moved out of or into each hour."
+          legend={netShiftLegend(flexShare)}
+          draw={draws.netShift}
+          label="Net demand with EV shift dispatch"
+        />
       </section>
 
       <Tiles scn={scn} />
 
-      <ChartCard
-        title="Net demand and shiftable EV charging"
-        subtitle="White is net demand (after renewables and gas) before any shifting. Green is net
-        demand after the flexible share of EV charging is moved, each hour within its shift window,
-        to minimise the peak; gas re-dispatches against the shifted demand.
-        The green always stays inside the white region, so it flattens toward the axis as flexibility
-        rises but never crosses it. Hover for the EV load moved out of or into each hour."
-        legend={netShiftLegend(flexShare)}
-        draw={draws.netShift}
-        label="Net demand with EV shift dispatch"
-      />
-
       <div className="card-row">
         <ChartCard
           title="Load duration curve"
-          subtitle="This is a helpful tool for utility planners todetermine how much total generating
-          capacity to build. Hours with positive net demand (demand > supply) are sorted from highest
-          to lowest, before and after the introducing flexibility. The goal is to lower the peak in
-          order to reduce the total number of power plants while using the ones we have more efficiently."
+          subtitle="This helps utility planners determine how much capacity to build into their system.
+          Hours with positive net demand (demand > supply) are sorted from highest to lowest, before
+          and after introducing flexibility. Lowering the peak net demand with flexibility reduces the
+          need for additional gas power plants and uses existing capacity efficiently."
           legend={netShiftLegend(flexShare)}
           draw={draws.ldc}
           label="Load duration curve"
           short
         />
         <ChartCard
-          title="Surplus generation exported"
-          subtitle="Total generation over the week that exceeds demand (negative net demand) and would
-          be exported or curtailed. The first bar is the surplus with no EV flexibility; the second is
-          what remains after flexible EV charging is moved into surplus hours. The sliver on the left
-          of each bar splits the surplus by source, in proportion to each source's output in the surplus
-          hours. Hover a bar for details."
+          title="Generation exported or curtailed"
+          subtitle="Total renewable generation that exceeded demand (supply > demand) that would
+          have been exported out of state or curtailed. The first bar is without EV flexibility;
+          the second shows the impact of flexible EV charging. Lower is better! I got fancy and
+          added an indicator to each bar showing the breakdown of each energy source."
           legend={exportLegend(flexShare)}
           draw={draws.exported}
           label="Surplus generation exported before and after EV flexibility"

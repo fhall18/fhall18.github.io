@@ -4,8 +4,9 @@ import * as d3 from 'd3';
 
 // Card with a legend and an SVG that D3 draws into. `draw(svgNode, tip)` is called whenever it
 // changes; `tip.show(event, title, rows)` and `tip.hide()` drive the hover tooltip.
+// `embedded` drops the card frame so the chart can sit inside another card.
 const ChartCard = ({
-  title, subtitle, legend, draw, label, short,
+  title, subtitle, legend, draw, label, short, embedded,
 }) => {
   const svgRef = useRef(null);
   const wrapRef = useRef(null);
@@ -40,7 +41,7 @@ const ChartCard = ({
   }, [draw]);
 
   return (
-    <section className="card">
+    <section className={embedded ? 'card-embedded' : 'card'}>
       <div className="card-head">
         <h4>{title}</h4>
         <p className="card-sub">{subtitle}</p>
@@ -80,10 +81,12 @@ ChartCard.propTypes = {
   draw: PropTypes.func.isRequired,
   label: PropTypes.string.isRequired,
   short: PropTypes.bool,
+  embedded: PropTypes.bool,
 };
 
 ChartCard.defaultProps = {
   short: false,
+  embedded: false,
 };
 
 export default ChartCard;

@@ -21,7 +21,6 @@ const delta = (before, after, lowerIsBetter) => {
 
 export const Tiles = ({ scn }) => {
   const t = scn.totals;
-  const posDelta = t.hoursPositiveAfter - t.hoursPositiveBefore;
   const tiles = [
     {
       label: 'Peak net demand',
@@ -36,19 +35,13 @@ export const Tiles = ({ scn }) => {
       delta: delta(-Math.min(t.minNetBefore, 0), -Math.min(t.minNetAfter, 0), true),
     },
     {
-      label: 'EV energy moved to another hour',
+      label: 'EV energy shifted',
       value: fmtMwh(t.mwhMoved),
-      unit: 'MWh/wk',
+      unit: 'MWh',
       delta: {
-        text: t.evMwh > 0 ? `${fmtPct0(t.mwhMoved / t.evMwh)} of weekly EV charging` : 'no EV charging',
+        text: t.evMwh > 0 ? `${fmtPct0(t.mwhMoved / t.evMwh)} of EV charging` : 'no EV charging',
         cls: '',
       },
-    },
-    {
-      label: 'Hours with positive net demand',
-      value: String(t.hoursPositiveAfter),
-      unit: `of ${scn.hours.length}`,
-      delta: { text: `${posDelta >= 0 ? '+' : ''}${posDelta} vs. before shift`, cls: '' },
     },
   ];
   if (t.gasMw > 0) {

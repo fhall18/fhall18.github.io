@@ -32,7 +32,8 @@ const Cell = ({ data }) => {
           </a>
         )}
         <div className="description">
-          <p>{data.desc}</p>
+          {/* pre-line keeps a blank line in the description as a paragraph gap */}
+          <p style={{ whiteSpace: 'pre-line' }}>{data.desc}</p>
         </div>
       </article>
     </div>

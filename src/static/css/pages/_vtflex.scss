@@ -40,6 +40,8 @@
       max-width: 900px;
     }
     p + p { margin-top: 12px; }
+    p + h4 { margin-top: 24px; }
+    h4 + p { margin-top: 6px; }
     .intro-rule {
       color: var(--ink);
       padding: 8px 14px;
@@ -74,11 +76,17 @@
     margin-bottom: 16px;
   }
   .ev-controls {
-    padding-bottom: 14px;
+    padding-bottom: 12px;
     .control-row {
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       max-width: 640px;
     }
+  }
+  // A chart placed inside a controls card, separated from the sliders by a hairline.
+  .card-embedded {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--hairline);
   }
   .control-row {
     display: grid;
@@ -119,6 +127,7 @@
     width: 10px;
     height: 10px;
     border-radius: 2px;
+    opacity: 0.6;
   }
 
   input[type='range'] {
