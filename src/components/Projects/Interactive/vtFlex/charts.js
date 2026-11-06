@@ -154,7 +154,7 @@ export function drawSupplyDemand(svgNode, scn, tip) {
     f.g.append('path')
       .datum(hours)
       .attr('fill', l.color)
-      .attr('fill-opacity', 0.6)
+      .attr('fill-opacity', 0.65)
       .attr('d', area(l.y0, l.y1));
   });
   f.g.append('path')
@@ -185,13 +185,13 @@ export function drawSupplyDemand(svgNode, scn, tip) {
 }
 
 export const supplyDemandLegend = (gasMw) => [
-  { label: 'Data center', color: COLORS.dc, opacity: 0.6 },
-  { label: 'Base load', color: COLORS.load, opacity: 0.6 },
-  { label: 'EV charging', color: COLORS.ev, opacity: 0.6 },
-  { label: 'Solar', color: COLORS.solar, opacity: 0.6 },
-  { label: 'Wind', color: COLORS.wind, opacity: 0.6 },
-  { label: 'Hydro', color: COLORS.hydro, opacity: 0.6 },
-  ...(gasMw > 0 ? [{ label: 'Gas', color: COLORS.gas, opacity: 0.6 }] : []),
+  { label: 'Data center', color: COLORS.dc, opacity: 0.65 },
+  { label: 'Base load', color: COLORS.load, opacity: 0.65 },
+  { label: 'EV charging', color: COLORS.ev, opacity: 0.65 },
+  { label: 'Solar', color: COLORS.solar, opacity: 0.65 },
+  { label: 'Wind', color: COLORS.wind, opacity: 0.65 },
+  { label: 'Hydro', color: COLORS.hydro, opacity: 0.65 },
+  ...(gasMw > 0 ? [{ label: 'Gas', color: COLORS.gas, opacity: 0.65 }] : []),
   { label: 'Net demand', color: COLORS.net, opacity: 0.9 },
 ];
 
@@ -249,7 +249,7 @@ export function drawNetShift(svgNode, scn, tip, flexShare) {
 
 export const netShiftLegend = (flexShare) => [
   { label: 'Net demand', color: COLORS.net, opacity: 0.9 },
-  { label: afterLabel(flexShare), color: COLORS.after },
+  { label: afterLabel(flexShare), color: COLORS.after, opacity: 0.9 },
 ];
 
 // ---------- chart 3: load duration curve ----------

@@ -54,7 +54,8 @@ const EV_CONTROLS = [
     hint: 'Share of EV charging that can move to another hour',
     max: 100,
     step: 1,
-    swatch: COLORS.ev,
+    swatch: COLORS.after,
+    swatchOpacity: 0.9, // same as the shifted net demand fill in the step 2 chart
   },
   {
     key: 'shiftWindow',
@@ -63,7 +64,8 @@ const EV_CONTROLS = [
     max: 24,
     step: 1,
     fmt: (v) => `±${Math.round(v)} h`,
-    swatch: COLORS.ev,
+    swatch: COLORS.after,
+    swatchOpacity: 0.9,
   },
 ];
 // Only the renewable shares are rebalanced to total 100%; gas capacity is independent.
@@ -103,7 +105,7 @@ const Controls = ({
       <div className="control" key={c.key}>
         <div className="control-label">
           <label className="control-name" htmlFor={`vt-ctl-${c.key}`}>
-            <span className="swatch" style={{ background: c.swatch }} />
+            <span className="swatch" style={{ background: c.swatch, opacity: c.swatchOpacity }} />
             <span>{c.name}</span>
           </label>
           <span className="control-value">{(c.fmt || fmtPct)(state[c.key])}</span>
