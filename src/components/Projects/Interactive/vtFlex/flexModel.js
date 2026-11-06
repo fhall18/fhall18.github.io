@@ -363,7 +363,12 @@ export function buildScenario(hourly, params) {
     // Positive net demand is what no supply covers: with a gas plant, demand above its capacity.
     positiveNetMwhBefore: sum(hours.map((h) => Math.max(h.net, 0))),
     positiveNetMwhAfter: sum(hours.map((h) => Math.max(h.netAfter, 0))),
+    // Negative net demand is renewable generation with nothing to serve: energy that would be
+    // exported out of state or curtailed. The shift absorbs some of it by moving EV charging in.
+    surplusMwhBefore: sum(hours.map((h) => Math.max(-h.net, 0))),
+    surplusMwhAfter: sum(hours.map((h) => Math.max(-h.netAfter, 0))),
   };
+  totals.surplusMwhAbsorbed = totals.surplusMwhBefore - totals.surplusMwhAfter;
 
   return {
     params: { ...params, evShare, gasMw }, hours, days, totals,

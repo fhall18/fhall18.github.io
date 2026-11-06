@@ -29,10 +29,15 @@ export const Tiles = ({ scn }) => {
       delta: delta(t.peakNetBefore, t.peakNetAfter, true),
     },
     {
-      label: 'Peak renewable surplus',
-      value: fmtMw(-Math.min(t.minNetAfter, 0)),
-      unit: 'MW',
-      delta: delta(-Math.min(t.minNetBefore, 0), -Math.min(t.minNetAfter, 0), true),
+      label: 'Renewable energy exported',
+      value: fmtMwh(t.surplusMwhAfter),
+      unit: 'MWh/wk',
+      delta: {
+        text: t.surplusMwhBefore > 0
+          ? `${fmtPct0(t.surplusMwhAbsorbed / t.surplusMwhBefore)} kept in Vermont with EV shift`
+          : 'no surplus generation',
+        cls: t.surplusMwhAbsorbed > 0 ? 'good' : '',
+      },
     },
     {
       label: 'EV energy shifted',

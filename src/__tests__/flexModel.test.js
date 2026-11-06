@@ -32,6 +32,22 @@ describe('flexModel', () => {
     expect(rigid.totals.peakNetAfter).toBeCloseTo(rigid.totals.peakNetBefore, 6);
   });
 
+  it('counts renewable surplus the shift absorbs, which gas never touches', () => {
+    const scn = buildScenario(hourly, base);
+    const surplus = (hours, key) => sum(hours.map((h) => Math.max(-h[key], 0)));
+    expect(scn.totals.surplusMwhBefore).toBeCloseTo(surplus(scn.hours, 'net'), 6);
+    expect(scn.totals.surplusMwhAfter).toBeCloseTo(surplus(scn.hours, 'netAfter'), 6);
+    expect(scn.totals.surplusMwhAbsorbed)
+      .toBeCloseTo(scn.totals.surplusMwhBefore - scn.totals.surplusMwhAfter, 6);
+    expect(scn.totals.surplusMwhAbsorbed).toBeGreaterThan(0);
+    expect(scn.totals.surplusMwhAbsorbed).toBeLessThanOrEqual(scn.totals.mwhMoved + 1e-6);
+    const rigid = buildScenario(hourly, { ...base, flexShare: 0 });
+    expect(rigid.totals.surplusMwhAbsorbed).toBeCloseTo(0, 6);
+    const gas = buildScenario(hourly, { ...base, gasMw: 200 });
+    expect(gas.totals.surplusMwhBefore).toBeCloseTo(scn.totals.surplusMwhBefore, 6);
+    expect(gas.totals.surplusMwhAbsorbed).toBeCloseTo(scn.totals.surplusMwhAbsorbed, 6);
+  });
+
   it('only moves charging within the shift window', () => {
     // Surplus (negative net) hours 3-5 can absorb charging. With a window of 1 hour, hour 4 has
     // no charging within reach, so it stays empty while hours 3 and 5 are filled.

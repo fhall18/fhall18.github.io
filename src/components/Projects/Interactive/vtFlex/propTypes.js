@@ -29,7 +29,7 @@ const scenarioShape = PropTypes.shape({
     'evPeakMw', 'evPeakMwShifted', 'mwhMoved', 'peakNetBefore', 'peakNetAfter', 'minNetBefore',
     'minNetAfter', 'totalAbsNetBefore', 'totalAbsNetAfter', 'hoursPositiveBefore',
     'hoursPositiveAfter', 'gasMw', 'gasMwhBefore', 'gasMwhAfter', 'positiveNetMwhBefore',
-    'positiveNetMwhAfter',
+    'positiveNetMwhAfter', 'surplusMwhBefore', 'surplusMwhAfter', 'surplusMwhAbsorbed',
   ])).isRequired,
 });
 
