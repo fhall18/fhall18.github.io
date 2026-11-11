@@ -1,26 +1,26 @@
 import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 
-import VT_DATA from './vtFlex/vtData';
-import { buildScenario, notebookParams, toHourly } from './vtFlex/flexModel';
-import ChartCard from './vtFlex/ChartCard';
+import VT_DATA from './vtData';
+import { buildScenario, notebookParams, toHourly } from './flexModel';
+import ChartCard from './ChartCard';
 import {
   Tiles, Derived, DailyTable, HourlyTable, downloadCsv,
-} from './vtFlex/Summary';
+} from './Summary';
 import {
   COLORS,
   drawSupplyDemand, drawNetShift, drawLdc, drawExport,
   supplyDemandLegend, netShiftLegend, exportLegend,
-} from './vtFlex/charts';
+} from './charts';
 
 const hourly = toHourly(VT_DATA);
 const NOTEBOOK_PARAMS = notebookParams(hourly);
 
-// Gas slider runs up to the week's peak demand (base load + data center + EV), rounded up to
+// Gas slider runs up to the week's peak demand (base load + cooling + EV), rounded up to
 // the next 100 MW, which is enough to cover every gap whatever the renewable mix.
 const GAS_MAX = (() => {
   const base = buildScenario(hourly, NOTEBOOK_PARAMS);
-  const peak = Math.max(...base.hours.map((h) => h.load + h.dc + h.ev));
+  const peak = Math.max(...base.hours.map((h) => h.base + h.cooling + h.ev));
   return Math.ceil(peak / 100) * 100;
 })();
 const fmtMwSlider = (v) => `${Math.round(v)} MW`;
@@ -186,11 +186,11 @@ const VermontFlexViz = () => {
         <h4>The nitty-gritty</h4>
         <p>
           This explorable shows the supply and demand of electricity during a hot summer week
-          in Vermont. The demand includes normal electric use (base load), a 300 MW data center and
-          250,000 EVs (about half of all Vermont vehicles). You get to select your power supply,
-          which has an impact on net demand (white region). In the section below, we explore
-          flexibility with EV charging and how it can lower net demand while filling the
-          deepest valleys where renewable energy is abundant.
+          in Vermont. The demand includes normal electric use (base load), air conditioning
+          (cooling) and 250,000 EVs (about half of all Vermont vehicles). You get to select your
+          power supply, which has an impact on net demand (white region). In the section below,
+          we explore flexibility with EV charging and how it can lower net demand while filling
+          the deepest valleys where renewable energy is abundant.
         </p>
         <h4>What the heck is net demand?!</h4>
         <p>
@@ -317,16 +317,18 @@ const VermontFlexViz = () => {
           <h4>How the shifting works</h4>
         </div>
         <p>
-          The model never picks out the peak and attacks it. Instead it asks a yes-or-no question:
+          The model doesn&apos;t target the highest peak directly. Instead it asks
+          a yes-or-no question -
           can every hour of the week be held at or below some level? It then searches for the
-          lowest level where the answer is yes. That lowest level is the smallest peak that
-          flexibility can reach.
+          lowest level where the answer remains yes. That level becomes the flattest demand that
+          flexibility can enable. In other words, it finds the flattest demand achievable with the
+          available flexibility. It does so in these four steps:
         </p>
         <ol>
           <li>
-            <strong>Split the charging.</strong> The flexible share of each hour&apos;s EV charging
-            can move; the rest stays put. Moved charging may land anywhere within the shift window,
-            and never so much that an hour&apos;s net demand crosses zero.
+            <strong>Split the charging.</strong> The flexible share of EV charging in a given hour
+            can move; the rest stays put. Flexible charging may land anywhere within the shift window,
+            but can never cause net demand to drop further below zero.
           </li>
           <li>
             <strong>Test a level.</strong> For a trial level, each hour has a certain amount of
@@ -337,7 +339,7 @@ const VermontFlexViz = () => {
           </li>
           <li>
             <strong>Search for the lowest level.</strong> Try a level halfway between the best and
-            worst cases. If it is reachable, try lower; if not, try higher. Repeating this homes in
+            worst cases. If it is reachable, try lower; if not, try higher. Repeating this hones in
             on the lowest reachable level, which is the new peak.
           </li>
           <li>

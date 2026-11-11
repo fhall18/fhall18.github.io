@@ -2,15 +2,18 @@
 //
 // Pipeline (same as the notebook):
 //   1. 5-minute rows -> centered rolling means (load window 6, wind window 12), hourly averages.
-//   2. Hourly shapes for EV charging, data center load and run-of-river hydro.
-//   3. Supply (solar, wind, hydro) scaled so each covers a chosen share of weekly demand energy.
-//   4. Net demand = load - solar - wind - hydro + EV + data center.
-//   5. A share of EV charging is moved, each hour within +/- window hours of itself, so the peak
+//   2. The measured load is split into base load and cooling load (see splitLoad). The notebook's
+//      data center is not modelled.
+//   3. Hourly shapes for EV charging and run-of-river hydro.
+//   4. Supply (solar, wind, hydro) scaled so each covers a chosen share of weekly demand energy,
+//      with the shares summing to 1, so weekly supply energy equals weekly demand energy.
+//   5. Net demand = base + cooling + EV - solar - wind - hydro.
+//   6. A share of EV charging is moved, each hour within +/- window hours of itself, so the peak
 //      net demand is minimized, holding total EV energy fixed and keeping the shifted net demand
 //      between zero and the original net demand in every hour.
-//   6. A gas plant (not in the notebook) runs as hard as needed to cover whatever positive net
+//   7. A gas plant (not in the notebook) runs as hard as needed to cover whatever positive net
 //      demand the renewables leave, up to its capacity, and is subtracted from net demand. The
-//      EV shift is solved on the renewable-only net demand (step 5), then gas is dispatched
+//      EV shift is solved on the renewable-only net demand (step 6), then gas is dispatched
 //      against the result, so `net` and `netAfter` both include gas. Positive net demand that
 //      remains is demand above the plant's capacity.
 
@@ -27,19 +30,21 @@ const HYDRO_CURVE = [
   0.82, 0.80, 0.79, 0.78, 0.78, 0.79, 0.82, 0.85, 0.88, 0.90, 0.91, 0.92,
   0.92, 0.91, 0.90, 0.89, 0.88, 0.87, 0.86, 0.85, 0.84, 0.83, 0.82, 0.82,
 ];
-const DC_WEEKDAY = [
-  0.75, 0.72, 0.70, 0.68, 0.70, 0.78, 0.88, 0.92, 0.95, 0.98, 1.0, 1.0,
-  1.0, 0.98, 0.95, 0.92, 0.90, 0.88, 0.85, 0.80, 0.78, 0.75, 0.72, 0.70,
+// Hourly shape of non-weather load (lighting, appliances, commercial and industrial use). It is
+// flat through the working day, lifts a little in the evening for cooking and lighting, and dips
+// overnight. Weekends wake up later.
+const BASE_WEEKDAY = [
+  0.86, 0.82, 0.80, 0.79, 0.80, 0.83, 0.90, 0.96, 1.00, 1.01, 1.01, 1.01,
+  1.00, 1.00, 0.99, 0.99, 1.00, 1.03, 1.05, 1.05, 1.03, 0.99, 0.94, 0.90,
 ];
-const DC_WEEKEND = [
-  0.72, 0.70, 0.68, 0.67, 0.68, 0.72, 0.78, 0.82, 0.85, 0.88, 0.90, 0.90,
-  0.90, 0.88, 0.85, 0.82, 0.80, 0.78, 0.75, 0.72, 0.70, 0.68, 0.65, 0.62,
+const BASE_WEEKEND = [
+  0.87, 0.83, 0.81, 0.80, 0.80, 0.81, 0.84, 0.89, 0.94, 0.97, 0.99, 1.00,
+  1.00, 0.99, 0.98, 0.98, 0.99, 1.02, 1.04, 1.04, 1.02, 0.98, 0.94, 0.90,
 ];
 
 // Fixed assumptions carried over from the notebook.
 export const NOTEBOOK = {
   evMw: 300, // ev_charging_profile = ev_shape * 300
-  dcMw: 300, // data_center_profile = dc_shape * 300
   solarShare: 0.4,
   windShare: 0.4,
   hydroShare: 0.2,
@@ -79,15 +84,30 @@ export function centeredRollingMean(values, window) {
   });
 }
 
-// rows: [hourly, load, data_center, solar, wind] in original 5-minute order.
-// Returns one record per hour with the smoothed and averaged inputs.
+const baseShape = (h) => (h.isWeekend ? BASE_WEEKEND[h.hour] : BASE_WEEKDAY[h.hour]);
+
+// Split the measured load into base load and cooling load. Base load is one level for the whole
+// week times the base shape. The level is the highest that keeps base load at or below the
+// measured load in every hour, so the coolest hour of the week has no cooling. Cooling is the
+// rest, which follows the temperature: near zero on cool nights, peaking in hot afternoons and
+// tailing off through the evening. base + cooling equals the measured load in every hour.
+export function splitLoad(hourly) {
+  const level = Math.min(...hourly.map((h) => h.load / baseShape(h)));
+  return hourly.map((h) => {
+    const base = level * baseShape(h);
+    return { ...h, base, cooling: h.load - base };
+  });
+}
+
+// rows: [hourly, load, solar, wind] in original 5-minute order.
+// Returns one record per hour with the smoothed and averaged inputs, and the load split into
+// base and cooling.
 export function toHourly(rows) {
   const recs = rows.map((r) => ({
     t: parseTimestamp(r[0]),
     load: toNumber(r[1]),
-    dc: toNumber(r[2]),
-    solar: toNumber(r[3]),
-    wind: toNumber(r[4]),
+    solar: toNumber(r[2]),
+    wind: toNumber(r[3]),
   }));
   const smoothedLoad = centeredRollingMean(recs.map((r) => r.load), 6);
   const smoothedWind = centeredRollingMean(recs.map((r) => r.wind), 12);
@@ -97,18 +117,17 @@ export function toHourly(rows) {
     let g = groups.get(r.t);
     if (!g) {
       g = {
-        n: 0, load: 0, dc: 0, solar: 0, wind: 0,
+        n: 0, load: 0, solar: 0, wind: 0,
       };
       groups.set(r.t, g);
     }
     g.n += 1;
     g.load += smoothedLoad[i];
-    g.dc += r.dc;
     g.solar += r.solar;
     g.wind += smoothedWind[i];
   });
 
-  return Array.from(groups.keys()).sort((a, b) => a - b).map((t) => {
+  return splitLoad(Array.from(groups.keys()).sort((a, b) => a - b).map((t) => {
     const g = groups.get(t);
     const d = new Date(t);
     const dow = d.getUTCDay();
@@ -121,11 +140,10 @@ export function toHourly(rows) {
       solarRaw: g.solar / g.n, // solar before scaling
       windRaw: g.wind / g.n, // smoothed_wind before scaling
     };
-  });
+  }));
 }
 
 const evShape = (h) => (h.isWeekend ? WEEKEND_CURVE[h.hour] : WEEKDAY_CURVE[h.hour]);
-const dcShape = (h) => (h.isWeekend ? DC_WEEKEND[h.hour] : DC_WEEKDAY[h.hour]);
 
 // Per-hour bounds on flexible charging so the shifted net demand stays between zero and the
 // original net demand (the "white region"):
@@ -227,9 +245,8 @@ export function shiftEvWindow(net, ev, flexShare, window, levels = 200) {
 // The EV share of total demand energy implied by the notebook's fixed 300 MW scaling.
 function notebookEvShare(hourly) {
   const loadSum = sum(hourly.map((h) => h.load));
-  const dcSum = sum(hourly.map((h) => dcShape(h) * NOTEBOOK.dcMw));
   const evSum = sum(hourly.map((h) => evShape(h) * NOTEBOOK.evMw));
-  return evSum / (loadSum + dcSum + evSum);
+  return evSum / (loadSum + evSum);
 }
 
 export function notebookParams(hourly) {
@@ -245,7 +262,7 @@ export function notebookParams(hourly) {
 }
 
 // params: shares are fractions (0..1).
-//   evShare    EV charging energy as a share of total demand energy (load + data center + EV)
+//   evShare    EV charging energy as a share of total demand energy (base + cooling + EV)
 //   solarShare, windShare, hydroShare   supply energy as a share of total demand energy
 //   flexShare  share of EV charging that can move to another hour
 //   shiftWindow  hours either side of its own hour that flexible charging may move (default 12)
@@ -255,16 +272,16 @@ export function buildScenario(hourly, params) {
   const gasMw = Math.max(params.gasMw || 0, 0);
 
   const evShapes = hourly.map(evShape);
-  const dcProfile = hourly.map((h) => dcShape(h) * NOTEBOOK.dcMw);
   const hydroShapes = hourly.map((h) => HYDRO_CURVE[h.hour]);
 
-  const loadSum = sum(hourly.map((h) => h.load));
-  const dcSum = sum(dcProfile);
+  const baseSum = sum(hourly.map((h) => h.base));
+  const coolingSum = sum(hourly.map((h) => h.cooling));
+  const loadSum = baseSum + coolingSum;
   const evShapeSum = sum(evShapes);
-  // ev = share * (load + dc + ev)  =>  ev = share / (1 - share) * (load + dc)
-  const evEnergy = (evShare / (1 - evShare)) * (loadSum + dcSum);
+  // ev = share * (load + ev)  =>  ev = share / (1 - share) * load
+  const evEnergy = (evShare / (1 - evShare)) * loadSum;
   const evMw = evShapeSum > 0 ? evEnergy / evShapeSum : 0;
-  const totalDemand = loadSum + dcSum + evEnergy;
+  const totalDemand = loadSum + evEnergy;
 
   const solarRawSum = sum(hourly.map((h) => h.solarRaw));
   const windRawSum = sum(hourly.map((h) => h.windRaw));
@@ -278,15 +295,16 @@ export function buildScenario(hourly, params) {
     const solar = h.solarRaw * solarScale;
     const wind = h.windRaw * windScale;
     const hydro = hydroShapes[i] * hydroMw;
-    const net = h.load - solar - wind - hydro + ev + dcProfile[i];
+    const net = h.base + h.cooling + ev - solar - wind - hydro;
     return {
       t: h.t,
       date: new Date(h.t),
       dayKey: h.dayKey,
       hour: h.hour,
       isWeekend: h.isWeekend,
-      load: h.load,
-      dc: dcProfile[i],
+      load: h.base + h.cooling,
+      base: h.base,
+      cooling: h.cooling,
       ev,
       solar,
       wind,
@@ -339,7 +357,8 @@ export function buildScenario(hourly, params) {
 
   const totals = {
     loadMwh: loadSum,
-    dcMwh: dcSum,
+    baseMwh: baseSum,
+    coolingMwh: coolingSum,
     evMwh: evEnergy,
     totalDemandMwh: totalDemand,
     solarMwh: solarRawSum * solarScale,

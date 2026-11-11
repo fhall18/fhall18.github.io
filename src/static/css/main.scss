@@ -67,4 +67,9 @@
 	@import 'pages/skills';
 	@import 'pages/stats';
 	@import 'pages/interactive';
-	@import 'pages/vtflex';
+
+// Projects. Each project keeps its styles in its own folder.
+
+	@import '../../components/Projects/vermont-flex/styles';
+	@import '../../components/Projects/miles-per-dollar/styles';
+	@import '../../components/Projects/heat-pump-calculator/styles';

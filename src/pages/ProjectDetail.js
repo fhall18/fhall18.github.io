@@ -1,15 +1,9 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 
 import Main from '../layouts/Main';
 import data from '../data/projects';
-
-// Map of interactive component names to their lazy-loaded modules
-const interactiveComponents = {
-  MilesPerDollarViz: lazy(() => import('../components/Projects/Interactive/MilesPerDollarViz')),
-  HabForecastViz: lazy(() => import('../components/Projects/Interactive/HabForecastViz')),
-  VermontFlexViz: lazy(() => import('../components/Projects/Interactive/VermontFlexViz')),
-};
+import interactiveComponents from '../components/Projects/registry';
 
 const ProjectDetail = () => {
   const { slug } = useParams();

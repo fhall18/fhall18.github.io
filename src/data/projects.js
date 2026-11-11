@@ -1,6 +1,18 @@
 // TODO Add a couple lines about each project
 const data = [
   {
+    title: 'Heat Pump Cost Calculator',
+    subtitle: 'What would heating cost with a heat pump?',
+    slug: 'heat-pump-calculator',
+    date: '2026-11-01',
+    desc:
+      'Estimate what heating costs you today and what it would cost with a heat pump, '
+      + 'including how the last five winters would have gone.',
+    interactive: 'HeatPumpCalculator',
+    // Work in progress: reachable at /projects/heat-pump-calculator, left off the list.
+    draft: true,
+  },
+  {
     title: 'Vermont Grid Flexibility',
     subtitle: 'How much can flexibility flatten net demand?',
     slug: 'vermont-grid-flexibility',

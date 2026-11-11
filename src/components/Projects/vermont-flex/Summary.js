@@ -78,8 +78,8 @@ Tiles.propTypes = { scn: scenarioShape.isRequired };
 export const Derived = ({ scn }) => {
   const t = scn.totals;
   const parts = [
-    `Weekly demand ${d3.format(',.0f')(t.totalDemandMwh / 1000)} GWh (base load ${fmtPct0(t.loadMwh / t.totalDemandMwh)}, `
-      + `data center ${fmtPct0(t.dcMwh / t.totalDemandMwh)}, EV ${fmtPct0(t.evMwh / t.totalDemandMwh)})`,
+    `Weekly demand ${d3.format(',.0f')(t.totalDemandMwh / 1000)} GWh (base load ${fmtPct0(t.baseMwh / t.totalDemandMwh)}, `
+      + `cooling ${fmtPct0(t.coolingMwh / t.totalDemandMwh)}, EV ${fmtPct0(t.evMwh / t.totalDemandMwh)})`,
     `EV charging fixed at ${fmtMwh(t.evMwh / 1000)} GWh/wk, peak ${fmtMw(t.evPeakMw)} MW`,
     `Solar ${fmtMwh(t.solarMwh / 1000)} GWh, wind ${fmtMwh(t.windMwh / 1000)} GWh, hydro ${fmtMwh(t.hydroMwh / 1000)} GWh/wk`,
   ];
@@ -162,8 +162,8 @@ const HOURLY_COLUMNS = [
     fmt: (h) => fmtTime(h.date),
     csv: (h) => h.date.toISOString().slice(0, 16).replace('T', ' '),
   },
-  { label: 'Base load', key: 'load' },
-  { label: 'Data center', key: 'dc' },
+  { label: 'Base load', key: 'base' },
+  { label: 'Cooling', key: 'cooling' },
   { label: 'EV charging', key: 'ev' },
   { label: 'Solar', key: 'solar' },
   { label: 'Wind', key: 'wind' },

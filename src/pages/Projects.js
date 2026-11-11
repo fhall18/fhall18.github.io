@@ -18,7 +18,7 @@ const Projects = () => (
           <p>A selection of projects that I&apos;m proud to have worked on</p>
         </div>
       </header>
-      {data.map((project) => (
+      {data.filter((project) => !project.draft).map((project) => (
         <Cell
           data={project}
           key={project.title}

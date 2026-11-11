@@ -10,7 +10,7 @@ const scenarioShape = PropTypes.shape({
   ])).isRequired,
   hours: PropTypes.arrayOf(PropTypes.shape({
     ...numbers([
-      't', 'dayKey', 'hour', 'load', 'dc', 'ev', 'solar', 'wind', 'hydro', 'net',
+      't', 'dayKey', 'hour', 'load', 'base', 'cooling', 'ev', 'solar', 'wind', 'hydro', 'net',
       'evShifted', 'dispatch', 'netAfter', 'gasBefore', 'gasAfter',
     ]),
     date: PropTypes.instanceOf(Date).isRequired,
@@ -25,7 +25,7 @@ const scenarioShape = PropTypes.shape({
     date: PropTypes.instanceOf(Date).isRequired,
   })).isRequired,
   totals: PropTypes.shape(numbers([
-    'loadMwh', 'dcMwh', 'evMwh', 'totalDemandMwh', 'solarMwh', 'windMwh', 'hydroMwh', 'evMw',
+    'loadMwh', 'baseMwh', 'coolingMwh', 'evMwh', 'totalDemandMwh', 'solarMwh', 'windMwh', 'hydroMwh', 'evMw',
     'evPeakMw', 'evPeakMwShifted', 'mwhMoved', 'peakNetBefore', 'peakNetAfter', 'minNetBefore',
     'minNetAfter', 'totalAbsNetBefore', 'totalAbsNetAfter', 'hoursPositiveBefore',
     'hoursPositiveAfter', 'gasMw', 'gasMwhBefore', 'gasMwhAfter', 'positiveNetMwhBefore',

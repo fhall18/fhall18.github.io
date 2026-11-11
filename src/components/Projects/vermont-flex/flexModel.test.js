@@ -1,7 +1,7 @@
-import VT_DATA from '../components/Projects/Interactive/vtFlex/vtData';
+import VT_DATA from './vtData';
 import {
   buildScenario, notebookParams, toHourly, shiftEvWindow,
-} from '../components/Projects/Interactive/vtFlex/flexModel';
+} from './flexModel';
 
 const hourly = toHourly(VT_DATA);
 const base = notebookParams(hourly);
@@ -11,6 +11,26 @@ describe('flexModel', () => {
   it('collapses the 5-minute rows into one record per hour of the week', () => {
     expect(VT_DATA.length).toBe(2016);
     expect(hourly.length).toBe(168);
+  });
+
+  it('splits the measured load into base and non-negative cooling that add back up', () => {
+    hourly.forEach((h) => {
+      expect(h.base + h.cooling).toBeCloseTo(h.load, 9);
+      expect(h.cooling).toBeGreaterThanOrEqual(-1e-9);
+    });
+    // The coolest hour of the week has no cooling.
+    expect(Math.min(...hourly.map((h) => h.cooling))).toBeCloseTo(0, 9);
+  });
+
+  it('matches weekly supply energy to weekly demand energy', () => {
+    const scn = buildScenario(hourly, base);
+    const t = scn.totals;
+    const demand = sum(scn.hours.map((h) => h.base + h.cooling + h.ev));
+    const supply = sum(scn.hours.map((h) => h.solar + h.wind + h.hydro));
+    expect(t.totalDemandMwh).toBeCloseTo(demand, 6);
+    expect(t.baseMwh + t.coolingMwh + t.evMwh).toBeCloseTo(t.totalDemandMwh, 6);
+    expect(supply).toBeCloseTo(demand, 6);
+    expect(t.solarMwh + t.windMwh + t.hydroMwh).toBeCloseTo(t.totalDemandMwh, 6);
   });
 
   it('keeps EV energy fixed and net demand inside the pre-shift region', () => {
