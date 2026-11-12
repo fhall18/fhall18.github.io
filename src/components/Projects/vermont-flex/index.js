@@ -327,8 +327,8 @@ const VermontFlexViz = () => {
         <ol>
           <li>
             <strong>Split the charging.</strong> The flexible share of EV charging in a given hour
-            can move; the rest stays put. Flexible charging may land anywhere within the shift window,
-            but can never cause net demand to drop further below zero.
+            can move; the rest stays put. Flexible charging may land anywhere within the shift
+            window, but can never cause net demand to drop further below zero.
           </li>
           <li>
             <strong>Test a level.</strong> For a trial level, each hour has a certain amount of
