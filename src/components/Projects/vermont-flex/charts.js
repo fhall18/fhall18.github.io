@@ -6,8 +6,8 @@ export const COLORS = {
   wind: '#ff9166',
   hydro: '#0963be',
   gas: '#ff00b7',
-  load: '#7fa6c8',
-  cooling: '#b34cc8',
+  load: '#b34cc8',
+  cooling: '#7fa6c8',
   ev: '#a0cc41',
   net: '#ffffff',
   after: '#a0cc41', // net demand after the shift, same green as EV charging
